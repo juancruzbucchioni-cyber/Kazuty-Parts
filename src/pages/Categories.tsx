@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
@@ -8,50 +8,56 @@ interface Category {
   image_url: string;
 }
 
-export default function Categories() {
-  const [categories, setCategories] = useState<Category[]>([]);
+export default function Categorias() {
+  const [categories, setCategorias] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchCategories() {
+    async function fetchCategorias() {
       setLoading(true);
-      
-      // Get all products
-      const { data, error } = await supabase
+
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('name, image_url, activo, orden, created_at')
+        .eq('activo', true)
+        .order('orden', { ascending: true })
+        .order('created_at', { ascending: false });
+
+      if (categoriesError) {
+        console.error(categoriesError);
+        setLoading(false);
+        return;
+      }
+
+      const { data: productsData, error: productsError } = await supabase
         .from('products')
         .select('category, image_url');
-        
-      if (error) {
-        console.error(error);
-      } else if (data) {
-        // Group by category and count
-        const categoryMap = new Map<string, { count: number; images: string[] }>();
-        
-        data.forEach(product => {
-          if (!categoryMap.has(product.category)) {
-            categoryMap.set(product.category, { count: 0, images: [] });
-          }
-          
-          const category = categoryMap.get(product.category)!;
-          category.count += 1;
-          category.images.push(product.image_url);
-        });
-        
-        // Convert to array and sort by count
-        const categoriesArray = Array.from(categoryMap.entries()).map(([name, { count, images }]) => ({
-          name,
-          count,
-          // Use the first image as the category image
-          image_url: images[0]
-        }));
-        
-        setCategories(categoriesArray);
+
+      if (productsError) {
+        console.error(productsError);
       }
-      
+
+      const productCountByCategory = new Map<string, number>();
+      const fallbackImageByCategory = new Map<string, string>();
+
+      (productsData || []).forEach((product) => {
+        productCountByCategory.set(product.category, (productCountByCategory.get(product.category) || 0) + 1);
+        if (!fallbackImageByCategory.has(product.category) && product.image_url) {
+          fallbackImageByCategory.set(product.category, product.image_url);
+        }
+      });
+
+      const normalizedCategories: Category[] = (categoriesData || []).map((category) => ({
+        name: category.name,
+        count: productCountByCategory.get(category.name) || 0,
+        image_url: category.image_url || fallbackImageByCategory.get(category.name) || '/branding/logo.png',
+      }));
+
+      setCategorias(normalizedCategories);
       setLoading(false);
     }
-    
-    fetchCategories();
+
+    fetchCategorias();
   }, []);
 
   if (loading) {
@@ -64,16 +70,16 @@ export default function Categories() {
 
   return (
     <div className="container py-10">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
-        Product Categories
+      <h1 className="font-brand text-3xl font-bold text-[#C026FF] drop-shadow-[0_0_10px_rgba(192,38,255,0.55)] mb-8">
+        Categorias de productos
       </h1>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map((category, index) => (
           <Link
             key={category.name}
             to={`/products?category=${category.name}`}
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-xl will-change-transform"
+            className="bg-black/55 backdrop-blur-sm border border-[#C026FF]/30 rounded-lg shadow-md overflow-hidden transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-xl will-change-transform"
             style={{
               animationDelay: `${index * 100}ms`,
               animation: 'fadeInUp 0.6s ease-out forwards'
@@ -85,33 +91,16 @@ export default function Categories() {
                 alt={category.name}
                 className="w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-110"
               />
-              {category.name === 'Electronics' && (
-                <div className="absolute inset-0 bg-yellow-400/30 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
-                  <h2 className="text-2xl font-bold text-white transform transition-all duration-300 hover:scale-110">{category.name}</h2>
-                </div>
-              )}
-              {category.name === 'Home & Office' && (
-                <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-secondary/10 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
-                  <h2 className="text-2xl font-bold text-white transform transition-all duration-300 hover:scale-110">{category.name}</h2>
-                </div>
-              )}
-              {category.name === 'Accessories' && (
-                <div className="absolute inset-0 bg-gradient-to-r from-secondary/10 to-primary/10 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
-                  <h2 className="text-2xl font-bold text-white transform transition-all duration-300 hover:scale-110">{category.name}</h2>
-                </div>
-              )}
-              {!['Electronics', 'Home & Office', 'Accessories'].includes(category.name) && (
-                <div className="absolute inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
-                  <h2 className="text-2xl font-bold text-white transform transition-all duration-300 hover:scale-110">{category.name}</h2>
-                </div>
-              )}
+              <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
+                <h2 className="font-brand text-2xl font-bold text-[#C026FF] drop-shadow-[0_0_10px_rgba(192,38,255,0.6)] transform transition-all duration-300 hover:scale-110">{category.name}</h2>
+              </div>
             </div>
             <div className="p-4 transform transition-all duration-300 hover:translate-x-2">
-              <p className="text-gray-600 dark:text-gray-300">
-                {category.count} {category.count === 1 ? 'product' : 'products'}
+              <p className="text-gray-200">
+                {category.count} {category.count === 1 ? 'producto' : 'productos'}
               </p>
-              <p className="mt-2 text-primary group-hover:underline transition-all duration-300 ease-in-out transform hover:translate-x-1">
-                Browse Category →
+              <p className="mt-2 text-[#C026FF] transition-all duration-300 ease-in-out transform hover:translate-x-1">
+                Ver categoria →
               </p>
             </div>
           </Link>

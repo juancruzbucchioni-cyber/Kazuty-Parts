@@ -1,16 +1,16 @@
-/** @type {import('tailwindcss').Config} */
+﻿/** @type {import('tailwindcss').Config} */
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        primary: '#A21CAF',
-        secondary: '#FACC15',
-        background: '#F8FAFC',
-        darkBackground: '#1E293B',
-        text: '#1E293B',
-        textLight: '#CBD5E1',
-        borderColor: '#E2E8F0',
+        primary: '#A855F7',
+        secondary: '#6B7280',
+        background: '#F5F5F5',
+        darkBackground: '#0B0B0F',
+        text: '#0B0B0F',
+        textLight: '#A3A3A3',
+        borderColor: '#A3A3A3',
         success: '#10B981',
         error: '#EF4444',
         magenta: {
@@ -39,7 +39,7 @@ export default {
         },
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Rajdhani', 'sans-serif'],
       },
       spacing: {
         72: '18rem',
@@ -61,3 +61,4 @@ export default {
   darkMode: 'class',
   plugins: [],
 };
+

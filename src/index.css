@@ -1,6 +1,17 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: 'Ethnocentric';
+  src: local('Ethnocentric'),
+       url('/fonts/Ethnocentric-Regular.woff2') format('woff2'),
+       url('/fonts/Ethnocentric-Regular.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 
 @layer base {
   :root {
@@ -75,6 +86,15 @@
   }
 }
 
+@keyframes reviewsTicker {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
 @layer components {
   .animate-modal-enter {
     animation: modalEnter 0.3s ease-out;
@@ -82,6 +102,11 @@
 
   .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
+  }
+
+  .reviews-ticker-track {
+    width: max-content;
+    animation: reviewsTicker 26s linear infinite;
   }
 
   .transform-gpu {
@@ -93,12 +118,25 @@
 }
 
 /* Global Styles */
-html {
-  @apply bg-background dark:bg-darkBackground text-text dark:text-textLight transition-colors duration-300;
+html,
+body {
+  min-height: 100%;
+  @apply text-text dark:text-textLight transition-colors duration-300;
+  background-image: linear-gradient(rgba(4, 4, 8, 0.72), rgba(4, 4, 8, 0.72)), url('/branding/site-bg-kazuty.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.font-brand {
+  font-family: 'Ethnocentric', 'Rajdhani', sans-serif;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 /* Container utility override */
@@ -164,3 +202,5 @@ body {
 .btn-hover-shadow {
   @apply transition-shadow duration-300 hover:shadow-lg;
 }
+
+

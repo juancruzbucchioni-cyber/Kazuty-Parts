@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShoppingCart, Star, ArrowLeft, Info, Package, Check, X, Truck, Shield } from 'lucide-react';
 import { supabase } from '../lib/supabase';
@@ -6,19 +6,21 @@ import { useCartStore } from '../store/cartStore';
 import { Product, Review, ProductImage } from '../types/supabase';
 import { useAuthStore } from '../store/authStore';
 import ProductGallery from '../components/ProductGallery';
+import { formatARS } from '../lib/currency';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
   const [product, setProduct] = useState<Product | null>(null);
   const [productImages, setProductImages] = useState<ProductImage[]>([]);
-  const [reviews, setReviews] = useState<Review[]>([]);
+  const [reviews, setResenas] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [reviewText, setReviewText] = useState('');
   const [rating, setRating] = useState(5);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
+  const [relatedProductos, setRelatedProductos] = useState<Product[]>([]);
   const [addedToCart, setAddedToCart] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
+  const [selectedColor, setSelectedColor] = useState<string>('Negro');
   
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
@@ -26,7 +28,7 @@ export default function ProductDetail() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    async function fetchProductAndReviews() {
+    async function fetchProductAndResenas() {
       setLoading(true);
       if (!id) return;
 
@@ -73,7 +75,7 @@ export default function ProductDetail() {
         if (reviewsError) {
           console.error('Error fetching reviews:', reviewsError);
         } else {
-          setReviews(reviewsData || []);
+          setResenas(reviewsData || []);
         }
         
         // Fetch related products in the same category
@@ -88,7 +90,7 @@ export default function ProductDetail() {
           if (relatedError) {
             console.error('Error fetching related products:', relatedError);
           } else {
-            setRelatedProducts(relatedData || []);
+            setRelatedProductos(relatedData || []);
           }
         }
       }
@@ -96,13 +98,22 @@ export default function ProductDetail() {
       setLoading(false);
     }
 
-    fetchProductAndReviews();
+    fetchProductAndResenas();
   }, [id]);
+
+  useEffect(() => {
+    if (!product) return;
+    const colors = product.colors && product.colors.length > 0
+      ? product.colors
+      : ['Negro', 'Blanco', 'Gris'];
+    setSelectedColor(colors[0]);
+  }, [product]);
 
   // Check if the product is in the cart and update quantity accordingly
   useEffect(() => {
     if (product) {
-      const cartItem = cartItems.find(item => item.id === product.id);
+      const cartItemId = selectedColor ? `${product.id}::${selectedColor}` : product.id;
+      const cartItem = cartItems.find(item => item.id === cartItemId);
       if (cartItem) {
         setQuantity(cartItem.quantity);
         setAddedToCart(true);
@@ -111,28 +122,29 @@ export default function ProductDetail() {
         setAddedToCart(false);
       }
     }
-  }, [cartItems, product]);
+  }, [cartItems, product, selectedColor]);
 
   const handleAddToCart = () => {
     if (!product) return;
+    const cartItemId = selectedColor ? `${product.id}::${selectedColor}` : product.id;
     
     if (addedToCart) {
       // If already in cart, update quantity directly
-      updateQuantity(product.id, quantity);
+      updateQuantity(cartItemId, quantity);
     } else {
       // If not in cart, add it once and then update quantity if needed
-      addItem(product);
+      addItem(product, selectedColor);
       
       // If quantity is more than 1, update the quantity
       if (quantity > 1) {
-        updateQuantity(product.id, quantity);
+        updateQuantity(cartItemId, quantity);
       }
     }
     setAddedToCart(true);
   };
 
-  const handleQuantityChange = (newQuantity: number) => {
-    setQuantity(newQuantity);
+  const handleQuantityChange = (newCantidad: number) => {
+    setQuantity(newCantidad);
   };
 
   const submitReview = async () => {
@@ -150,7 +162,7 @@ export default function ProductDetail() {
         
       if (error) {
         console.error('Error submitting review:', error);
-        alert('Failed to submit review');
+        alert('No se pudo enviar la reseña');
       } else {
         // Refresh reviews
         const { data, error: fetchError } = await supabase
@@ -167,7 +179,7 @@ export default function ProductDetail() {
           .order('created_at', { ascending: false });
           
         if (!fetchError) {
-          setReviews(data || []);
+          setResenas(data || []);
           setReviewText('');
           setRating(5);
         }
@@ -178,38 +190,38 @@ export default function ProductDetail() {
   };
 
   // Generate mock specifications based on product category
-  const getProductSpecifications = () => {
+  const getProductEspecificaciones = () => {
     if (!product) return [];
     
     const baseSpecs = [
-      { name: 'Brand', value: 'ModernShop' },
-      { name: 'Model', value: `MS-${product.id.substring(0, 6).toUpperCase()}` },
-      { name: 'Warranty', value: '1 Year Limited Warranty' },
-      { name: 'Country of Origin', value: 'United States' },
+      { name: 'Marca', value: 'Kazuty Partz' },
+      { name: 'Modelo', value: `KP-${product.id.substring(0, 6).toUpperCase()}` },
+      { name: 'Garantia', value: '6 meses por falla de fabrica' },
+      { name: 'Origen', value: 'Argentina' },
     ];
     
     const categorySpecs = {
       'Electronics': [
-        { name: 'Power Source', value: 'Rechargeable Battery' },
-        { name: 'Battery Life', value: 'Up to 12 hours' },
-        { name: 'Connectivity', value: 'Bluetooth 5.0, Wi-Fi' },
-        { name: 'Dimensions', value: '5.8 x 2.8 x 0.3 inches' },
-        { name: 'Weight', value: '180g' },
-        { name: 'Material', value: 'Aluminum, Glass' },
+        { name: 'Alimentacion', value: 'Bateria recargable' },
+        { name: 'Autonomia', value: 'Hasta 12 horas' },
+        { name: 'Conectividad', value: 'Bluetooth 5.0, Wi-Fi' },
+        { name: 'Dimensiones', value: '5.8 x 2.8 x 0.3 pulgadas' },
+        { name: 'Peso', value: '180 g' },
+        { name: 'Material', value: 'Aluminio y vidrio' },
       ],
       'Home & Office': [
-        { name: 'Material', value: 'Premium Wood, Metal' },
-        { name: 'Dimensions', value: '24 x 18 x 30 inches' },
-        { name: 'Weight', value: '5.2 kg' },
-        { name: 'Assembly Required', value: 'Minimal assembly' },
-        { name: 'Care Instructions', value: 'Wipe clean with damp cloth' },
+        { name: 'Material', value: 'Madera premium y metal' },
+        { name: 'Dimensiones', value: '24 x 18 x 30 pulgadas' },
+        { name: 'Peso', value: '5.2 kg' },
+        { name: 'Armado requerido', value: 'Armado minimo' },
+        { name: 'Cuidado', value: 'Limpiar con paño humedo' },
       ],
       'Accessories': [
-        { name: 'Material', value: 'Genuine Leather, Metal' },
-        { name: 'Dimensions', value: '8.5 x 4.7 x 0.8 inches' },
-        { name: 'Weight', value: '120g' },
-        { name: 'Color Options', value: 'Black, Brown, Navy' },
-        { name: 'Care Instructions', value: 'Clean with leather conditioner' },
+        { name: 'Material', value: 'Cuero y metal' },
+        { name: 'Dimensiones', value: '8.5 x 4.7 x 0.8 pulgadas' },
+        { name: 'Peso', value: '120 g' },
+        { name: 'Opciones de color', value: 'Negro, Marron, Azul' },
+        { name: 'Cuidado', value: 'Limpiar con acondicionador para cuero' },
       ]
     };
     
@@ -227,20 +239,24 @@ export default function ProductDetail() {
   if (!product) {
     return (
       <div className="container py-10">
-        <p className="text-gray-600 dark:text-gray-300">Product not found.</p>
+        <p className="text-gray-600 dark:text-gray-300">Producto no encontrado.</p>
         <Link to="/products" className="text-primary hover:underline mt-4 inline-block">
           <ArrowLeft className="inline mr-2 h-4 w-4" />
-          Back to Products
+          Volver a productos
         </Link>
       </div>
     );
   }
 
+  const availableColors = product.colors && product.colors.length > 0
+    ? product.colors
+    : ['Negro', 'Blanco', 'Gris'];
+
   return (
     <div className="container py-10">
       <Link to="/products" className="text-primary hover:underline mb-6 inline-block link-hover">
         <ArrowLeft className="inline mr-2 h-4 w-4" />
-        Back to Products
+        Volver a productos
       </Link>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -252,7 +268,7 @@ export default function ProductDetail() {
         
         {/* Product Details */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl font-bold text-white mb-2">
             {product.name}
           </h1>
           
@@ -271,74 +287,92 @@ export default function ProductDetail() {
               ))}
             </div>
             <span className="ml-2 text-gray-600 dark:text-gray-300">
-              ({reviews.length} {reviews.length === 1 ? 'review' : 'reviews'})
+              ({reviews.length} {reviews.length === 1 ? 'reseña' : 'reseñas'})
             </span>
           </div>
           
-          <p className="text-2xl font-bold text-primary mb-4">
-            ${product.price.toFixed(2)}
+          <p className="text-3xl font-black text-[#C026FF] drop-shadow-[0_0_10px_rgba(192,38,255,0.6)] mb-4">
+            {formatARS(Math.round(product.price))}
           </p>
           
           <div className="mb-6">
-            <p className="text-gray-700 dark:text-gray-300 mb-2">
-              <span className="font-semibold">Category:</span> {product.category}
+            <p className="text-gray-200 mb-2">
+              <span className="font-semibold">Categoria:</span> {product.category}
             </p>
-            <p className="text-gray-700 dark:text-gray-300 mb-2">
-              <span className="font-semibold">Availability:</span>{' '}
+            <div className="mb-2">
+              <span className="font-semibold text-gray-200">Color:</span>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {availableColors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-3 py-1 rounded-full border text-sm transition-colors ${
+                      selectedColor === color
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-gray-500 text-gray-200'
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <p className="text-gray-200 mb-2">
+              <span className="font-semibold">Disponibilidad:</span>{' '}
               {product.stock > 0 ? (
-                <span className="text-green-600 dark:text-green-400">In Stock ({product.stock} available)</span>
+                <span className="text-green-600 dark:text-green-400">En stock ({product.stock} disponibles)</span>
               ) : (
-                <span className="text-red-600 dark:text-red-400">Out of Stock</span>
+                <span className="text-red-600 dark:text-red-400">Sin stock</span>
               )}
             </p>
           </div>
           
           {/* Product Benefits */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Key Benefits</h3>
+          <div className="bg-black/55 border border-[#C026FF]/30 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-[#C026FF] mb-3">Beneficios clave</h3>
             <ul className="space-y-2">
               <li className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-gray-700 dark:text-gray-300">Premium quality materials</span>
+                <span className="text-gray-200">Materiales premium de alta durabilidad</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-gray-700 dark:text-gray-300">1-year manufacturer warranty</span>
+                <span className="text-gray-200">Garantia del fabricante</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-gray-700 dark:text-gray-300">Free shipping on orders over $50</span>
+                <span className="text-gray-200">Envio gratis segun zona y monto</span>
               </li>
               <li className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
-                <span className="text-gray-700 dark:text-gray-300">30-day money-back guarantee</span>
+                <span className="text-gray-200">Atencion post-venta personalizada</span>
               </li>
             </ul>
           </div>
           
           {/* Quantity Selector */}
           <div className="flex items-center mb-6">
-            <label htmlFor="quantity" className="mr-4 text-gray-700 dark:text-gray-300">
-              Quantity:
+            <label htmlFor="quantity" className="mr-4 text-gray-200">
+              Cantidad:
             </label>
-            <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
+            <div className="flex items-center border border-[#C026FF]/40 rounded-md">
               <button
                 onClick={() => handleQuantityChange(Math.max(1, quantity - 1))}
-                className="px-3 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-1 text-gray-200 hover:bg-[#C026FF]/15"
               >
                 -
               </button>
-              <span className="px-4 py-1 text-gray-800 dark:text-gray-200">{quantity}</span>
+              <span className="px-4 py-1 text-white">{quantity}</span>
               <button
                 onClick={() => handleQuantityChange(Math.min(product.stock, quantity + 1))}
-                className="px-3 py-1 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                className="px-3 py-1 text-gray-200 hover:bg-[#C026FF]/15"
               >
                 +
               </button>
             </div>
           </div>
           
-          {/* Add to Cart Button */}
+          {/* Agregar al carrito Button */}
           <button
             onClick={handleAddToCart}
             disabled={product.stock === 0}
@@ -349,26 +383,26 @@ export default function ProductDetail() {
             } transition-colors`}
           >
             <ShoppingCart className="w-5 h-5" />
-            <span>{product.stock > 0 ? (addedToCart ? 'Update Cart' : 'Add to Cart') : 'Out of Stock'}</span>
+            <span>{product.stock > 0 ? (addedToCart ? 'Actualizar carrito' : 'Agregar al carrito') : 'Sin stock'}</span>
           </button>
           
-          {/* Shipping & Returns Info */}
+          {/* Envio & Returns Info */}
           <div className="mt-6 grid grid-cols-2 gap-4">
             <div className="flex items-center">
               <Truck className="h-5 w-5 text-primary mr-2" />
-              <span className="text-sm text-gray-600 dark:text-gray-300">Free shipping over $50</span>
+              <span className="text-sm text-gray-200">Envio a todo el pais</span>
             </div>
             <div className="flex items-center">
               <Package className="h-5 w-5 text-primary mr-2" />
-              <span className="text-sm text-gray-600 dark:text-gray-300">Secure packaging</span>
+              <span className="text-sm text-gray-200">Empaque seguro</span>
             </div>
             <div className="flex items-center">
               <Shield className="h-5 w-5 text-primary mr-2" />
-              <span className="text-sm text-gray-600 dark:text-gray-300">30-day returns</span>
+              <span className="text-sm text-gray-200">Cambios y devoluciones</span>
             </div>
             <div className="flex items-center">
               <Info className="h-5 w-5 text-primary mr-2" />
-              <span className="text-sm text-gray-600 dark:text-gray-300">Satisfaction guaranteed</span>
+              <span className="text-sm text-gray-200">Satisfaccion garantizada</span>
             </div>
           </div>
         </div>
@@ -386,7 +420,7 @@ export default function ProductDetail() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              Description
+              Descripcion
             </button>
             <button
               onClick={() => setActiveTab('specifications')}
@@ -396,7 +430,7 @@ export default function ProductDetail() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              Specifications
+              Especificaciones
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
@@ -406,67 +440,66 @@ export default function ProductDetail() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              Reviews ({reviews.length})
+              Resenas ({reviews.length})
             </button>
           </nav>
         </div>
         
         <div className="py-6">
-          {/* Description Tab */}
+          {/* Descripcion Tab */}
           {activeTab === 'description' && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Product Description
+            <div className="bg-black/55 border border-[#C026FF]/30 p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-white mb-4">
+                Descripcion del producto
               </h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-4">
+              <p className="text-gray-200 mb-4">
                 {product.description}
               </p>
-              <p className="text-gray-600 dark:text-gray-300">
-                Experience the perfect blend of style, functionality, and durability with our {product.name}. 
-                Designed with the modern consumer in mind, this {product.category.toLowerCase()} product 
-                offers exceptional quality and value.
+              <p className="text-gray-200">
+                Disfruta la mejor combinacion entre estilo, rendimiento y durabilidad con {product.name}. 
+                Este producto de {product.category.toLowerCase()} fue pensado para brindar calidad y excelente valor.
               </p>
               
               <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                  Features
+                <h3 className="text-lg font-medium text-[#C026FF] mb-3">
+                  Caracteristicas
                 </h3>
-                <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
-                  <li>Premium quality materials ensure long-lasting durability</li>
-                  <li>Sleek, modern design complements any environment</li>
-                  <li>Versatile functionality for everyday use</li>
-                  <li>Easy to maintain and clean</li>
-                  <li>Compact and portable for convenience</li>
+                <ul className="list-disc list-inside space-y-2 text-gray-200">
+                  <li>Materiales de alta calidad para mayor duracion</li>
+                  <li>Diseño moderno y excelente terminacion</li>
+                  <li>Uso versatil para el dia a dia</li>
+                  <li>Facil mantenimiento y limpieza</li>
+                  <li>Formato practico y funcional</li>
                 </ul>
               </div>
               
               <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                  What's Included
+                <h3 className="text-lg font-medium text-[#C026FF] mb-3">
+                  Que incluye
                 </h3>
-                <ul className="list-disc list-inside space-y-2 text-gray-600 dark:text-gray-300">
+                <ul className="list-disc list-inside space-y-2 text-gray-200">
                   <li>1 x {product.name}</li>
-                  <li>User manual with care instructions</li>
-                  <li>Warranty card</li>
-                  {product.category === 'Electronics' && <li>Charging cable and adapter</li>}
-                  {product.category === 'Home & Office' && <li>Assembly tools and hardware</li>}
-                  {product.category === 'Accessories' && <li>Protective storage pouch</li>}
+                  <li>Manual de uso y cuidado</li>
+                  <li>Tarjeta de garantia</li>
+                  {product.category === 'Electronics' && <li>Cable de carga y adaptador</li>}
+                  {product.category === 'Home & Office' && <li>Kit de armado y accesorios</li>}
+                  {product.category === 'Accessories' && <li>Estuche de proteccion</li>}
                 </ul>
               </div>
             </div>
           )}
           
-          {/* Specifications Tab */}
+          {/* Especificaciones Tab */}
           {activeTab === 'specifications' && (
-            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-                Product Specifications
+            <div className="bg-black/55 border border-[#C026FF]/30 p-6 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold text-white mb-4">
+                Especificaciones del producto
               </h2>
               
               <div className="overflow-hidden">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {getProductSpecifications().map((spec, index) => (
+                    {getProductEspecificaciones().map((spec, index) => (
                       <tr key={index} className={index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-700/50' : ''}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white w-1/3">
                           {spec.name}
@@ -481,31 +514,30 @@ export default function ProductDetail() {
               </div>
               
               <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2 flex items-center">
+                <h3 className="text-lg font-medium text-[#C026FF] mb-2 flex items-center">
                   <Info className="h-5 w-5 mr-2 text-primary" />
-                  Additional Information
+                  Informacion adicional
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Specifications may vary slightly from the actual product. Please refer to the 
-                  manufacturer's website for the most up-to-date information.
+                <p className="text-gray-200">
+                  Las especificaciones pueden variar levemente segun lote o modelo.
                 </p>
               </div>
             </div>
           )}
           
-          {/* Reviews Tab */}
+          {/* Resenas Tab */}
           {activeTab === 'reviews' && (
             <div>
               {/* Add Review Form */}
               {user ? (
                 <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-8">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                    Write a Review
+                    Escribir una resena
                   </h3>
                   
                   <div className="mb-4">
-                    <label className="block text-gray-700 dark:text-gray-300 mb-2">
-                      Rating
+                    <label className="block text-gray-200 mb-2">
+                      Puntuacion
                     </label>
                     <div className="flex">
                       {[1, 2, 3, 4, 5].map((star) => (
@@ -527,7 +559,7 @@ export default function ProductDetail() {
                   
                   <div className="mb-4">
                     <label htmlFor="review" className="block text-gray-700 dark:text-gray-300 mb-2">
-                      Your Review
+                      Tu resena
                     </label>
                     <textarea
                       id="review"
@@ -535,7 +567,7 @@ export default function ProductDetail() {
                       value={reviewText}
                       onChange={(e) => setReviewText(e.target.value)}
                       className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      placeholder="Share your experience with this product..."
+                      placeholder="Contanos tu experiencia con este producto..."
                     ></textarea>
                   </div>
                   
@@ -544,18 +576,18 @@ export default function ProductDetail() {
                     disabled={!reviewText}
                     className="bg-primary text-white px-6 py-2 rounded-md hover:bg-magenta-600 transition-colors disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed btn-hover-scale"
                   >
-                    Submit Review
+                    Enviar resena
                   </button>
                 </div>
               ) : (
                 <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg mb-8">
                   <p className="text-gray-700 dark:text-gray-300">
-                    Please <Link to="/auth" className="text-primary hover:underline link-hover">sign in</Link> to leave a review.
+                    Inicia sesion en <Link to="/auth" className="text-primary hover:underline link-hover">tu cuenta</Link> para dejar una reseña.
                   </p>
                 </div>
               )}
               
-              {/* Reviews List */}
+              {/* Resenas List */}
               {reviews.length > 0 ? (
                 <div className="space-y-6">
                   {reviews.map((review) => (
@@ -577,27 +609,27 @@ export default function ProductDetail() {
                       </div>
                       <p className="text-gray-700 dark:text-gray-300 mb-2">{review.comment}</p>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        By User {review.user_id.substring(0, 8)}
+                        Usuario {review.user_id.substring(0, 8)}
                       </p>
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-600 dark:text-gray-300">No reviews yet. Be the first to review this product!</p>
+                <p className="text-gray-600 dark:text-gray-300">Aun no hay resenas. Se la primera persona en opinar sobre este producto.</p>
               )}
             </div>
           )}
         </div>
       </div>
       
-      {/* Related Products */}
-      {relatedProducts.length > 0 && (
+      {/* Productos relacionados */}
+      {relatedProductos.length > 0 && (
         <div className="mt-16">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-            Related Products
+            Productos relacionados
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {relatedProducts.map((relatedProduct) => (
+            {relatedProductos.map((relatedProduct) => (
               <Link 
                 key={relatedProduct.id} 
                 to={`/products/${relatedProduct.id}`}
@@ -612,8 +644,8 @@ export default function ProductDetail() {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {relatedProduct.name}
                   </h3>
-                  <p className="text-primary font-medium mt-2">
-                    ${relatedProduct.price.toFixed(2)}
+                  <p className="text-[#C026FF] font-extrabold mt-2">
+                    {formatARS(Math.round(relatedProduct.price))}
                   </p>
                 </div>
               </Link>
@@ -624,3 +656,5 @@ export default function ProductDetail() {
     </div>
   );
 }
+
+

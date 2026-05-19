@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -20,13 +20,19 @@ import Contact from './pages/Contact';
 import Sitemap from './pages/Sitemap';
 import Categories from './pages/Categories';
 import Profile from './pages/Profile';
-import { supabase } from './lib/supabase';
+import CustomPanel from './pages/CustomPanel';
+import { isSupabaseConfigured, supabase } from './lib/supabase';
 import './styles/animations.css';
 
 function App() {
   const { checkUser } = useAuthStore();
 
   useEffect(() => {
+    if (!isSupabaseConfigured) {
+      checkUser();
+      return;
+    }
+
     // Initialize auth state when the app loads
     const initAuth = async () => {
       await checkUser();
@@ -50,7 +56,7 @@ function App() {
   }, [checkUser]);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background dark:bg-darkBackground transition-all duration-300">
+    <div className="flex flex-col min-h-screen bg-transparent transition-all duration-300">
       {/* Navbar */}
       <Navbar />
 
@@ -73,6 +79,7 @@ function App() {
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/panel-custom" element={<CustomPanel />} />
         </Routes>
       </main>
 
@@ -86,3 +93,5 @@ function App() {
 }
 
 export default App;
+
+

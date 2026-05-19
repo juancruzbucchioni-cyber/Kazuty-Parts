@@ -1,4 +1,4 @@
-import { Product } from './supabase';
+﻿import { Product } from './supabase';
 
 export interface CartItem extends Product {
   quantity: number;
@@ -11,3 +11,5 @@ export interface CartState {
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
 } 
+
+

@@ -1,10 +1,10 @@
-import { RefreshCw, Clock, CreditCard, HelpCircle } from 'lucide-react';
+﻿import { RefreshCw, Clock, CreditCard, HelpCircle } from 'lucide-react';
 
 export default function Returns() {
   return (
     <section className="container py-10">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Returns & Refunds
+        Cambios y devoluciones
       </h1>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
@@ -14,10 +14,10 @@ export default function Returns() {
               <RefreshCw className="h-8 w-8 text-primary mr-4 flex-shrink-0" />
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Return Policy
+                  Politica de devoluciones
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  We accept returns within 30 days of purchase for most items. Products must be in original condition with all packaging and tags intact.
+                  We accept returns within 30 days of purchase for most items. Productos must be in original condition with all packaging and tags intact.
                 </p>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">
                   Some items are not eligible for return, including:
@@ -70,7 +70,7 @@ export default function Returns() {
                   To initiate a return:
                 </p>
                 <ol className="list-decimal list-inside mt-2 text-gray-600 dark:text-gray-300 space-y-1">
-                  <li>Log in to your account and go to "Order History"</li>
+                  <li>Log in to your account and go to "Historial de pedidos"</li>
                   <li>Select the order containing the item(s) you wish to return</li>
                   <li>Click "Return Items" and follow the instructions</li>
                   <li>Print the prepaid return shipping label</li>
@@ -85,7 +85,7 @@ export default function Returns() {
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-          Returns FAQ
+          FAQ de devoluciones
         </h2>
         
         <div className="space-y-4">
@@ -129,3 +129,5 @@ export default function Returns() {
     </section>
   );
 }
+
+

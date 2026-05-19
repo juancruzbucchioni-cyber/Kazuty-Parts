@@ -1,10 +1,10 @@
-import { Truck, Clock, Globe, DollarSign } from 'lucide-react';
+﻿import { Truck, Clock, Globe, DollarSign } from 'lucide-react';
 
-export default function ShippingPolicy() {
+export default function EnvioPolicy() {
   return (
     <section className="container py-10">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Shipping Policy
+        Envio Policy
       </h1>
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
@@ -14,14 +14,14 @@ export default function ShippingPolicy() {
               <Truck className="h-8 w-8 text-primary mr-4 flex-shrink-0" />
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Shipping Methods
+                  Envio Methods
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   We offer various shipping methods to meet your needs:
                 </p>
                 <ul className="list-disc list-inside mt-2 text-gray-600 dark:text-gray-300 space-y-1">
-                  <li>Standard Shipping (3-5 business days)</li>
-                  <li>Express Shipping (1-2 business days)</li>
+                  <li>Standard Envio (3-5 business days)</li>
+                  <li>Express Envio (1-2 business days)</li>
                   <li>Same-Day Delivery (select areas only)</li>
                 </ul>
               </div>
@@ -34,7 +34,7 @@ export default function ShippingPolicy() {
                   Processing Time
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Orders are typically processed within 24 hours of being placed. During peak seasons or promotional periods, processing may take up to 48 hours.
+                  Pedidos are typically processed within 24 hours of being placed. During peak seasons or promotional periods, processing may take up to 48 hours.
                 </p>
               </div>
             </div>
@@ -45,7 +45,7 @@ export default function ShippingPolicy() {
               <Globe className="h-8 w-8 text-primary mr-4 flex-shrink-0" />
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  International Shipping
+                  International Envio
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   We ship to over 100 countries worldwide. International shipping typically takes 7-14 business days, depending on the destination and customs processing.
@@ -57,10 +57,10 @@ export default function ShippingPolicy() {
               <DollarSign className="h-8 w-8 text-primary mr-4 flex-shrink-0" />
               <div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Shipping Costs
+                  Envio Costs
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Shipping costs are calculated based on weight, dimensions, and destination. Free shipping is available for orders over $50 within the continental US.
+                  Envio costs are calculated based on weight, dimensions, and destination. Free shipping is available for orders over $50 within the continental US.
                 </p>
               </div>
             </div>
@@ -70,7 +70,7 @@ export default function ShippingPolicy() {
       
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-          Shipping FAQ
+          Envio FAQ
         </h2>
         
         <div className="space-y-4">
@@ -79,7 +79,7 @@ export default function ShippingPolicy() {
               How can I track my order?
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Once your order ships, you'll receive a tracking number via email. You can also track your order in your account dashboard under "Order History."
+              Once your order ships, you'll receive a tracking number via email. You can also track your order in your account dashboard under "Historial de pedidos."
             </p>
           </div>
           
@@ -114,3 +114,5 @@ export default function ShippingPolicy() {
     </section>
   );
 }
+
+

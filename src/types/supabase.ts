@@ -1,4 +1,4 @@
-export type Product = {
+﻿export type Product = {
   id: string;
   name: string;
   description: string;
@@ -8,14 +8,18 @@ export type Product = {
   stock: number;
   created_at: string;
   category_id?: string;
+  colors?: string[] | null;
 };
 
 export type CartItem = {
   id: string;
+  product_id: string;
   name: string;
   price: number;
   image: string;
   quantity: number;
+  stock: number;
+  color?: string;
 };
 
 export type User = {
@@ -66,9 +70,21 @@ export type ProductImage = {
   created_at: string;
 };
 
+export type Testimonial = {
+  id: string;
+  nombre: string;
+  mensaje: string;
+  foto_url?: string | null;
+  activo: boolean;
+  orden: number;
+  created_at: string;
+};
+
 export type ProductDetails = Product & {
   category_name: string;
   category_description?: string;
   category_image_url?: string;
   images?: ProductImage[];
 };
+
+

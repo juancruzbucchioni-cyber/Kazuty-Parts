@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Mail, Phone, MapPin, MessageSquare, Send } from 'lucide-react';
 
 export default function Contact() {
@@ -30,7 +30,7 @@ export default function Contact() {
   return (
     <section className="container py-10">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Contact Us
+        Contactanos
       </h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -63,7 +63,7 @@ export default function Contact() {
                     Phone
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Customer Service:<br /> 
+                    Atencion al cliente:<br /> 
                     (+56) 9 4455 2084
                   </p>
                 </div>
@@ -76,7 +76,7 @@ export default function Contact() {
                     Email
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Customer Service:<br /> 
+                    Atencion al cliente:<br /> 
                     support@modernshop.com
                   </p>
                 </div>
@@ -195,7 +195,7 @@ export default function Contact() {
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="">Select a subject</option>
-                    <option value="order">Order Inquiry</option>
+                    <option value="order">Consulta de pedido</option>
                     <option value="return">Return/Refund</option>
                     <option value="product">Product Information</option>
                     <option value="feedback">Feedback</option>
@@ -255,10 +255,12 @@ export default function Contact() {
             allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
-            title="ModernShop Location"
+            title="ModernTienda Location"
           ></iframe>
         </div>
       </div>
     </section>
   );
 }
+
+

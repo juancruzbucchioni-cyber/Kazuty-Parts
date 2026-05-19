@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { Package, Truck, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import AuthGuard from '../components/AuthGuard';
@@ -42,7 +42,7 @@ export default function OrderTracking() {
         carrier: 'FedEx',
         steps: [
           {
-            title: 'Order Placed',
+            title: 'Pedido realizado',
             description: 'Your order has been received and is being processed.',
             date: '2025-03-15 09:23 AM',
             completed: true
@@ -54,7 +54,7 @@ export default function OrderTracking() {
             completed: true
           },
           {
-            title: 'Order Processing',
+            title: 'Pedido en preparacion',
             description: 'Your order is being prepared for shipping.',
             date: '2025-03-16 10:45 AM',
             completed: true
@@ -102,18 +102,18 @@ export default function OrderTracking() {
     <AuthGuard>
       <section className="container py-10">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-          Order Tracking
+          Seguimiento de pedido
         </h1>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Track Your Order
+            Rastrea tu pedido
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="orderNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Order Number
+                Numero de pedido
               </label>
               <input
                 type="text"
@@ -144,7 +144,7 @@ export default function OrderTracking() {
               disabled={isTracking}
               className="w-full md:w-auto px-6 py-3 bg-primary text-white rounded-lg hover:bg-magenta-600 transition-colors disabled:bg-gray-400 btn-hover-scale"
             >
-              {isTracking ? 'Tracking...' : 'Track Order'}
+              {isTracking ? 'Rastreando...' : 'Rastrear pedido'}
             </button>
           </form>
         </div>
@@ -157,7 +157,7 @@ export default function OrderTracking() {
                   Order #{trackingResult.orderNumber}
                 </h2>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Placed on {trackingResult.date} • {trackingResult.items} item{trackingResult.items !== 1 ? 's' : ''}
+                  Placed on {trackingResult.date} â€¢ {trackingResult.items} item{trackingResult.items !== 1 ? 's' : ''}
                 </p>
               </div>
               <div className="flex items-center">
@@ -171,7 +171,7 @@ export default function OrderTracking() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  Shipping Details
+                  Envio Details
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   <span className="font-medium">Carrier:</span> {trackingResult.carrier}
@@ -192,7 +192,7 @@ export default function OrderTracking() {
                   If you have questions about your order, we're here to help.
                 </p>
                 <button className="px-4 py-2 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors btn-hover-scale">
-                  Contact Support
+                  Contactar soporte
                 </button>
               </div>
             </div>
@@ -244,3 +244,4 @@ export default function OrderTracking() {
     </AuthGuard>
   );
 }
+

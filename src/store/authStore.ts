@@ -1,8 +1,8 @@
-import { create } from 'zustand';
+﻿import { create } from 'zustand';
 import { User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 
-interface UserProfile {
+interface UserPerfil {
   id: string;
   username: string;
   full_name?: string | null;
@@ -12,15 +12,15 @@ interface UserProfile {
 
 interface AuthState {
   user: User | null;
-  profile: UserProfile | null;
+  profile: UserPerfil | null;
   loading: boolean;
   setUser: (user: User | null) => void;
-  setProfile: (profile: UserProfile | null) => void;
+  setPerfil: (profile: UserPerfil | null) => void;
   checkUser: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: any | null }>;
   signUp: (email: string, password: string, username: string) => Promise<{ error: any | null, data: any | null }>;
   signOut: () => Promise<void>;
-  fetchUserProfile: (userId: string) => Promise<void>;
+  fetchUserPerfil: (userId: string) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -28,8 +28,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   profile: null,
   loading: true,
   setUser: (user) => set({ user, loading: false }),
-  setProfile: (profile) => set({ profile }),
+  setPerfil: (profile) => set({ profile }),
   checkUser: async () => {
+    if (!isSupabaseConfigured) {
+      set({ user: null, profile: null, loading: false });
+      return;
+    }
+
     try {
       // Get the current session instead of just the user
       const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
@@ -47,7 +52,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         
         // If user exists, fetch their profile
         if (userData.user) {
-          await get().fetchUserProfile(userData.user.id);
+          await get().fetchUserPerfil(userData.user.id);
         }
       } else {
         set({ user: null, profile: null, loading: false });
@@ -57,7 +62,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: null, profile: null, loading: false });
     }
   },
-  fetchUserProfile: async (userId) => {
+  fetchUserPerfil: async (userId) => {
+    if (!isSupabaseConfigured) return;
+
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -73,7 +80,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           const { data: userData } = await supabase.auth.getUser();
           if (userData.user) {
             const username = userData.user.email?.split('@')[0] || 'user';
-            const { data: newProfile, error: createError } = await supabase
+            const { data: newPerfil, error: createError } = await supabase
               .from('profiles')
               .insert({
                 id: userId,
@@ -85,8 +92,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
               
             if (createError) {
               console.error('Error creating user profile:', createError);
-            } else if (newProfile) {
-              set({ profile: newProfile as UserProfile });
+            } else if (newPerfil) {
+              set({ profile: newPerfil as UserPerfil });
             }
           }
         }
@@ -94,13 +101,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
       
       if (data) {
-        set({ profile: data as UserProfile });
+        set({ profile: data as UserPerfil });
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
   },
   signIn: async (email, password) => {
+    if (!isSupabaseConfigured) {
+      return { error: { message: 'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env' } };
+    }
+
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
@@ -110,7 +121,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       if (!error && data?.user) {
         set({ user: data.user, loading: false });
         // Fetch user profile after successful sign in
-        await get().fetchUserProfile(data.user.id);
+        await get().fetchUserPerfil(data.user.id);
       }
       
       return { error };
@@ -120,6 +131,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   signUp: async (email, password, username) => {
+    if (!isSupabaseConfigured) {
+      return {
+        error: { message: 'Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env' },
+        data: null
+      };
+    }
+
     try {
       // First check if username is already taken
       const { data: existingUsers, error: checkError } = await supabase
@@ -165,7 +183,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           console.error('Error creating profile:', profileError);
         } else {
           // Fetch the newly created profile
-          await get().fetchUserProfile(data.user.id);
+          await get().fetchUserPerfil(data.user.id);
         }
         
         set({ 
@@ -181,6 +199,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
   signOut: async () => {
+    if (!isSupabaseConfigured) {
+      set({ user: null, profile: null });
+      return;
+    }
+
     try {
       await supabase.auth.signOut();
       set({ user: null, profile: null });
@@ -189,3 +212,5 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 }));
+
+

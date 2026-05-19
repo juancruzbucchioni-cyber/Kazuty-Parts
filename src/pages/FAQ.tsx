@@ -1,15 +1,15 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ChevronDown, ChevronUp, Search } from 'lucide-react';
 
 // FAQ data
-const faqCategories = [
+const faqCategorias = [
   {
     id: 'orders',
-    name: 'Orders & Shipping',
+    name: 'Pedidos & Envio',
     faqs: [
       {
         question: 'How do I track my order?',
-        answer: 'You can track your order by logging into your account and visiting the "Order History" section. Alternatively, you can use the Order Tracking page and enter your order number and email address.'
+        answer: 'You can track your order by logging into your account and visiting the "Historial de pedidos" section. Alternatively, you can use the Seguimiento de pedido page and enter your order number and email address.'
       },
       {
         question: 'How long will it take to receive my order?',
@@ -17,7 +17,7 @@ const faqCategories = [
       },
       {
         question: 'Can I change or cancel my order?',
-        answer: 'Orders can be changed or canceled within 1 hour of placing them. After that, the order may have already been processed for shipping. Please contact customer service immediately if you need to make changes.'
+        answer: 'Pedidos can be changed or canceled within 1 hour of placing them. After that, the order may have already been processed for shipping. Please contact customer service immediately if you need to make changes.'
       },
       {
         question: 'Do you ship internationally?',
@@ -27,15 +27,15 @@ const faqCategories = [
   },
   {
     id: 'returns',
-    name: 'Returns & Refunds',
+    name: 'Cambios y devoluciones',
     faqs: [
       {
         question: 'What is your return policy?',
-        answer: 'We accept returns within 30 days of purchase for most items. Products must be in original condition with all packaging and tags intact. Some items like personalized products and digital downloads are not eligible for return.'
+        answer: 'We accept returns within 30 days of purchase for most items. Productos must be in original condition with all packaging and tags intact. Some items like personalized products and digital downloads are not eligible for return.'
       },
       {
         question: 'How do I initiate a return?',
-        answer: 'To initiate a return, log in to your account, go to "Order History," select the order containing the item(s) you wish to return, and click "Return Items." Follow the instructions to complete the process.'
+        answer: 'To initiate a return, log in to your account, go to "Historial de pedidos," select the order containing the item(s) you wish to return, and click "Return Items." Follow the instructions to complete the process.'
       },
       {
         question: 'How long does it take to process a refund?',
@@ -49,7 +49,7 @@ const faqCategories = [
   },
   {
     id: 'products',
-    name: 'Products & Inventory',
+    name: 'Productos e inventario',
     faqs: [
       {
         question: 'How do I know if a product is in stock?',
@@ -57,7 +57,7 @@ const faqCategories = [
       },
       {
         question: 'Are your products authentic?',
-        answer: 'Yes, all products sold on ModernShop are 100% authentic. We source directly from manufacturers or authorized distributors to ensure quality and authenticity.'
+        answer: 'Yes, all products sold on ModernTienda are 100% authentic. We source directly from manufacturers or authorized distributors to ensure quality and authenticity.'
       },
       {
         question: 'Do you offer product warranties?',
@@ -75,7 +75,7 @@ const faqCategories = [
     faqs: [
       {
         question: 'How do I create an account?',
-        answer: 'Click on the user icon in the top right corner of the page and select "Sign Up." Fill in your email address and create a password. You can also sign up during the checkout process.'
+        answer: 'Click on the user icon in the top right corner of the page and select "Registrarse." Fill in your email address and create a password. You can also sign up during the checkout process.'
       },
       {
         question: 'What payment methods do you accept?',
@@ -87,7 +87,7 @@ const faqCategories = [
       },
       {
         question: 'How do I reset my password?',
-        answer: 'Click on the user icon, select "Sign In," and then click on "Forgot Password." Enter your email address, and we\'ll send you instructions to reset your password.'
+        answer: 'Click on the user icon, select "Iniciar sesion," and then click on "Olvide mi contrasena." Enter your email address, and we\'ll send you instructions to reset your password.'
       }
     ]
   }
@@ -107,7 +107,7 @@ export default function FAQ() {
   };
   
   const filteredFaqs = searchQuery 
-    ? faqCategories.flatMap(category => 
+    ? faqCategorias.flatMap(category => 
         category.faqs.filter(faq => 
           faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
           faq.answer.toLowerCase().includes(searchQuery.toLowerCase())
@@ -126,7 +126,7 @@ export default function FAQ() {
         <div className="relative max-w-md mx-auto">
           <input
             type="text"
-            placeholder="Search for answers..."
+            placeholder="Buscar respuestas..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full px-4 py-3 pl-10 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
@@ -136,10 +136,10 @@ export default function FAQ() {
       </div>
       
       {searchQuery ? (
-        // Search Results
+        // Resultados de busqueda
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-            Search Results ({filteredFaqs.length})
+            Resultados de busqueda ({filteredFaqs.length})
           </h2>
           
           {filteredFaqs.length > 0 ? (
@@ -166,7 +166,7 @@ export default function FAQ() {
                         {faq.answer}
                       </p>
                       <p className="text-sm text-primary mt-2">
-                        Category: {faq.category}
+                        Categoria: {faq.category}
                       </p>
                     </div>
                   )}
@@ -175,20 +175,20 @@ export default function FAQ() {
             </div>
           ) : (
             <p className="text-gray-600 dark:text-gray-300">
-              No results found for "{searchQuery}". Please try a different search term or browse our FAQ categories below.
+              No se encontraron resultados para "{searchQuery}". Prueba con otra busqueda o explora las categorias de FAQ abajo.
             </p>
           )}
         </div>
       ) : (
-        // FAQ Categories
+        // FAQ Categorias
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Category Navigation */}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 h-fit">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Categories
+              Categorias
             </h2>
             <nav className="space-y-2">
-              {faqCategories.map(category => (
+              {faqCategorias.map(category => (
                 <button
                   key={category.id}
                   onClick={() => setActiveCategory(category.id)}
@@ -207,11 +207,11 @@ export default function FAQ() {
           {/* FAQ Content */}
           <div className="md:col-span-3 bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-              {faqCategories.find(c => c.id === activeCategory)?.name}
+              {faqCategorias.find(c => c.id === activeCategory)?.name}
             </h2>
             
             <div className="space-y-4">
-              {faqCategories
+              {faqCategorias
                 .find(c => c.id === activeCategory)
                 ?.faqs.map((faq, index) => (
                   <div key={index} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0 last:pb-0">
@@ -243,7 +243,7 @@ export default function FAQ() {
         </div>
       )}
       
-      {/* Contact Support */}
+      {/* Contactar soporte */}
       <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-6 mt-8 text-center">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
           Can't find what you're looking for?
@@ -255,9 +255,11 @@ export default function FAQ() {
           href="/contact"
           className="inline-block px-6 py-3 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors"
         >
-          Contact Support
+          Contactar soporte
         </a>
       </div>
     </section>
   );
 }
+
+

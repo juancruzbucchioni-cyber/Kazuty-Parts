@@ -1,109 +1,80 @@
 import { useState } from 'react';
 import { ShoppingCart, Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
-import { supabase } from '../lib/supabase';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { Link } from 'react-router-dom';
+import { formatARS } from '../lib/currency';
+
+type PaymentMethod = 'efectivo' | 'transferencia' | 'mercado_pago' | 'tarjeta';
+
+const WHATSAPP_PHONE = '543534128474';
+
+function paymentLabel(method: PaymentMethod) {
+  switch (method) {
+    case 'efectivo':
+      return 'Efectivo';
+    case 'transferencia':
+      return 'Transferencia';
+    case 'mercado_pago':
+      return 'Mercado Pago';
+    case 'tarjeta':
+      return 'Tarjeta';
+    default:
+      return method;
+  }
+}
 
 export default function Cart() {
   const cartItems = useCartStore((state) => state.items);
   const removeItem = useCartStore((state) => state.removeItem);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const clearCart = useCartStore((state) => state.clearCart);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const { user } = useAuthStore();
 
-  const handleQuantityChange = (productId: string, newQuantity: number) => {
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('transferencia');
+
+  const handleQuantityChange = (cartItemId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
-      removeItem(productId);
+      removeItem(cartItemId);
     } else {
-      updateQuantity(productId, newQuantity);
+      updateQuantity(cartItemId, newQuantity);
     }
   };
 
-  const checkout = async () => {
-    // Check if user is logged in
-    if (!user) {
-      // Redirect to login page if not authenticated
-      navigate('/auth', { state: { from: '/cart', message: 'Please sign in to complete your purchase' } });
-      return;
-    }
+  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const shipping = 0;
+  const total = subtotal + shipping;
 
-    setLoading(true);
-    try {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+  const checkoutByWhatsApp = () => {
+    if (cartItems.length === 0) return;
 
-      if (userError || !user) {
-        alert('User not authenticated!');
-        setLoading(false);
-        return;
-      }
+    const lines = cartItems.map((item, index) => {
+      const colorText = item.color ? ` | Color: ${item.color}` : '';
+      return `${index + 1}. ${item.name}${colorText} | Cantidad: ${item.quantity} | Unit: ${formatARS(Math.round(item.price))} | Subtotal: ${formatARS(Math.round(item.price * item.quantity))}`;
+    });
 
-      const totalPrice = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-      );
+    const message =
+      `Hola Kazuty Partz, quiero comprar estos productos:\n\n` +
+      `${lines.join('\n')}\n\n` +
+      `Forma de pago: ${paymentLabel(paymentMethod)}\n` +
+      `Total: ${formatARS(Math.round(total))}\n\n` +
+      `Quedo atento/a para coordinar.`;
 
-      const { data: order, error: orderError } = await supabase
-        .from('orders')
-        .insert({
-          user_id: user.id,
-          total_price: totalPrice,
-          status: 'pending',
-        })
-        .select()
-        .single();
-
-      if (orderError) {
-        alert('Error creating order: ' + orderError.message);
-        setLoading(false);
-        return;
-      }
-
-      for (const item of cartItems) {
-        const { error: orderItemError } = await supabase
-          .from('order_items')
-          .insert({
-            order_id: order.id,
-            product_id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-          });
-
-        if (orderItemError) {
-          alert('Error creating order item: ' + orderItemError.message);
-          setLoading(false);
-          return;
-        }
-      }
-
-      clearCart();
-      alert('Order placed successfully!');
-    } catch (error: any) {
-      alert('Checkout error: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
+    const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   return (
     <section className="container py-10">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Your Cart
-      </h1>
+      <h1 className="text-3xl font-bold text-white mb-6">Tu carrito</h1>
+
       {cartItems.length === 0 ? (
-        <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md text-center">
+        <div className="bg-black/55 backdrop-blur-sm p-8 rounded-lg border border-primary/30 text-center">
           <ShoppingCart className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-600 dark:text-gray-300 text-lg mb-6">Your cart is empty.</p>
+          <p className="text-gray-300 text-lg mb-6">Tu carrito está vacío.</p>
           <Link
             to="/products"
-            className="inline-block px-6 py-2 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors btn-hover-scale btn-hover-shadow"
+            className="inline-block px-6 py-2 bg-primary text-white rounded-md hover:bg-violet-700 transition-colors btn-hover-scale btn-hover-shadow"
           >
-            Continue shopping
+            Seguir comprando
           </Link>
         </div>
       ) : (
@@ -112,98 +83,98 @@ export default function Cart() {
             {cartItems.map((item) => (
               <div
                 key={item.id}
-                className="flex items-center justify-between bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border-l-4 border-primary"
+                className="flex items-center justify-between bg-black/55 backdrop-blur-sm p-4 rounded-lg border border-primary/30"
               >
                 <div className="flex items-center">
-                  <img 
-                    src={item.image} 
-                    alt={item.name} 
-                    className="w-16 h-16 object-cover rounded-md mr-4"
-                  />
+                  <img src={item.image} alt={item.name} className="w-16 h-16 object-cover rounded-md mr-4" />
                   <div>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {item.name}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      ${item.price.toFixed(2)}
-                    </p>
+                    <h2 className="text-lg font-semibold text-white">{item.name}</h2>
+                    <p className="text-gray-300">{formatARS(Math.round(item.price))}</p>
+                    {item.color ? <p className="text-sm text-primary">Color: {item.color}</p> : null}
                     <div className="flex items-center mt-2">
-                      <button 
+                      <button
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
-                        className="p-1 bg-gray-100 dark:bg-gray-700 rounded-l-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                        className="p-1 bg-gray-800 rounded-l-md hover:bg-gray-700"
                       >
-                        <Minus className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                        <Minus className="h-4 w-4 text-gray-300" />
                       </button>
-                      <span className="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
-                        {item.quantity}
-                      </span>
-                      <button 
+                      <span className="px-3 py-1 bg-gray-800 text-gray-200">{item.quantity}</span>
+                      <button
                         onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
-                        className="p-1 bg-gray-100 dark:bg-gray-700 rounded-r-md hover:bg-gray-200 dark:hover:bg-gray-600"
+                        className="p-1 bg-gray-800 rounded-r-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={item.quantity >= item.stock}
                       >
-                        <Plus className="h-4 w-4 text-gray-600 dark:text-gray-300" />
+                        <Plus className="h-4 w-4 text-gray-300" />
                       </button>
                     </div>
                   </div>
                 </div>
                 <div className="flex flex-col items-end">
-                  <p className="font-semibold text-gray-900 dark:text-white mb-2">
-                    ${(item.price * item.quantity).toFixed(2)}
-                  </p>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="text-red-500 hover:text-red-600 transition-colors"
-                  >
+                  <p className="font-semibold text-white mb-2">{formatARS(Math.round(item.price * item.quantity))}</p>
+                  <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-300 transition-colors">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
               </div>
             ))}
-            
+
             <div className="mt-6">
-              <Link
-                to="/products"
-                className="inline-flex items-center text-primary hover:text-magenta-600 transition-colors link-hover"
-              >
+              <Link to="/products" className="inline-flex items-center text-primary hover:text-violet-300 transition-colors link-hover">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                Continue Shopping
+                Seguir comprando
               </Link>
             </div>
           </div>
-          
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md h-fit">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              Order Summary
-            </h2>
+
+          <div className="bg-black/55 backdrop-blur-sm p-6 rounded-lg border border-primary/30 h-fit">
+            <h2 className="text-xl font-semibold text-white mb-4">Resumen del pedido</h2>
             <div className="space-y-2 mb-4">
-              <div className="flex justify-between text-gray-600 dark:text-gray-300">
+              <div className="flex justify-between text-gray-300">
                 <span>Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
-                <span>${cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}</span>
+                <span>{formatARS(Math.round(subtotal))}</span>
               </div>
-              <div className="flex justify-between text-gray-600 dark:text-gray-300">
-                <span>Shipping</span>
-                <span>Free</span>
+              <div className="flex justify-between text-gray-300">
+                <span>Envio</span>
+                <span>Gratis</span>
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-2 mt-2">
-                <div className="flex justify-between font-semibold text-lg">
+              <div className="border-t border-gray-700 pt-2 mt-2">
+                <div className="flex justify-between font-semibold text-lg text-white">
                   <span>Total</span>
-                  <span className="text-primary">${cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}</span>
+                  <span className="text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.6)]">{formatARS(Math.round(total))}</span>
                 </div>
               </div>
             </div>
-            <Link
-              to="/products"
-              className="w-full flex items-center justify-center bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-white px-6 py-3 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors text-center btn-hover-shadow mb-4"
-            >
-              Add more products
-            </Link>
+
+            <div className="mb-4">
+              <label htmlFor="payment-method" className="block text-sm text-gray-300 mb-2">
+                Forma de pago
+              </label>
+              <select
+                id="payment-method"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                className="w-full p-2 border border-primary/40 rounded-md bg-black/60 text-white focus:border-primary focus:ring-primary"
+              >
+                <option value="transferencia">Transferencia</option>
+                <option value="mercado_pago">Mercado Pago</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="efectivo">Efectivo</option>
+              </select>
+            </div>
+
             <button
-              onClick={checkout}
-              disabled={loading}
-              className="w-full flex items-center justify-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-magenta-600 transition-colors disabled:bg-gray-400 btn-hover-scale"
+              onClick={checkoutByWhatsApp}
+              className="w-full flex items-center justify-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition-colors btn-hover-scale"
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {loading ? 'Processing...' : 'Checkout'}
+              Comprar por WhatsApp
+            </button>
+
+            <button
+              onClick={clearCart}
+              className="w-full mt-3 flex items-center justify-center bg-gray-800 text-gray-200 px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              Vaciar carrito
             </button>
           </div>
         </div>

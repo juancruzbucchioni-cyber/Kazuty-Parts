@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { Mail, Lock, LogIn, UserPlus, User as UserIcon } from 'lucide-react';
@@ -59,7 +59,7 @@ export default function Auth() {
           setAuthError(error.message);
         } else {
           // Show success message for sign in
-          setSuccessMessage("Sign in successful! Redirecting...");
+          setSuccessMessage("Inicio de sesion exitoso. Redirigiendo...");
           // Redirect to home page after a short delay
           setTimeout(() => {
             navigate('/');
@@ -77,7 +77,7 @@ export default function Auth() {
     <div className="container max-w-md mx-auto py-12">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md">
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-          {isSignUp ? 'Create an Account' : 'Sign In'}
+          {isSignUp ? 'Crear una cuenta' : 'Iniciar sesion'}
         </h1>
         
         {message && (
@@ -156,7 +156,7 @@ export default function Auth() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 className="pl-10 w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="••••••••"
+                placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                 minLength={6}
               />
             </div>
@@ -173,17 +173,17 @@ export default function Auth() {
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                Processing...
+                Procesando...
               </span>
             ) : isSignUp ? (
               <span className="flex items-center">
                 <UserPlus className="h-5 w-5 mr-2" />
-                Sign Up
+                Registrarse
               </span>
             ) : (
               <span className="flex items-center">
                 <LogIn className="h-5 w-5 mr-2" />
-                Sign In
+                Iniciar sesion
               </span>
             )}
           </button>
@@ -197,7 +197,7 @@ export default function Auth() {
             }}
             className="text-primary hover:text-magenta-600 transition-colors link-hover"
           >
-            {isSignUp ? 'Already have an account? Sign In' : 'Need an account? Sign Up'}
+            {isSignUp ? 'Already have an account? Iniciar sesion' : 'Need an account? Registrarse'}
           </button>
         </div>
         
@@ -205,11 +205,11 @@ export default function Auth() {
           <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
             By signing in or creating an account, you agree to our{' '}
             <a href="/terms" className="text-primary hover:text-magenta-600 transition-colors link-hover">
-              Terms of Service
+              Terminos del servicio
             </a>{' '}
             and{' '}
             <a href="/privacy" className="text-primary hover:text-magenta-600 transition-colors link-hover">
-              Privacy Policy
+              Politica de privacidad
             </a>
             .
           </p>
@@ -218,3 +218,4 @@ export default function Auth() {
     </div>
   );
 }
+

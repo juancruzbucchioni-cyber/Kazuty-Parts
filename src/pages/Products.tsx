@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+﻿import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { useCartStore } from '../store/cartStore';
 import ProductCard from '../components/ProductCard';
 import QuickView from '../components/QuickView';
 import { Product } from '../types/supabase';
-import { Filter, SlidersHorizontal, Eye } from 'lucide-react';
+import { Filter } from 'lucide-react';
+import { formatARS } from '../lib/currency';
 
-export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<string[]>([]);
+export default function ProductosPage() {
+  const [products, setProductos] = useState<Product[]>([]);
+  const [categories, setCategorias] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
   const [maxPrice, setMaxPrice] = useState<number>(1000);
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFiltros, setShowFiltros] = useState(false);
   const [sortBy, setSortBy] = useState<string>('');
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
@@ -31,7 +32,13 @@ export default function ProductsPage() {
     }
   }, [categoryParam]);
 
-  const fetchProducts = async () => {
+  const fetchProductos = async () => {
+    if (!isSupabaseConfigured) {
+      setProductos([]);
+      setLoading(false);
+      return;
+    }
+
     // Don't set loading to true if we're just sorting
     if (!sortBy) {
       setLoading(true);
@@ -67,27 +74,40 @@ export default function ProductsPage() {
     if (error) {
       console.error(error);
     } else {
-      setProducts(data || []);
+      setProductos(data || []);
     }
     
     setLoading(false);
   };
 
-  const fetchCategories = async () => {
+  const fetchCategorias = async () => {
+    if (!isSupabaseConfigured) {
+      setCategorias([]);
+      return;
+    }
+
     const { data, error } = await supabase
-      .from('products')
-      .select('category')
-      .order('category');
+      .from('categories')
+      .select('name')
+      .eq('activo', true)
+      .order('orden', { ascending: true })
+      .order('created_at', { ascending: false });
       
     if (error) {
       console.error(error);
     } else {
-      const uniqueCategories = [...new Set(data.map(item => item.category))];
-      setCategories(uniqueCategories);
+      const uniqueCategorias = [...new Set(data.map(item => item.name))];
+      setCategorias(uniqueCategorias);
     }
   };
 
   const fetchMaxPrice = async () => {
+    if (!isSupabaseConfigured) {
+      setMaxPrice(1000);
+      setPriceRange([0, 1000]);
+      return;
+    }
+
     const { data, error } = await supabase
       .from('products')
       .select('price')
@@ -104,19 +124,19 @@ export default function ProductsPage() {
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchCategorias();
     fetchMaxPrice();
   }, []);
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
-      fetchProducts();
+      fetchProductos();
     }, 300); // Add a small delay to prevent rapid re-fetching
 
     return () => clearTimeout(debounceTimer);
   }, [selectedCategory, priceRange, searchQuery, sortBy]);
 
-  const resetFilters = () => {
+  const resetFiltros = () => {
     setSelectedCategory('');
     setPriceRange([0, maxPrice]);
     setSortBy('');
@@ -131,39 +151,49 @@ export default function ProductsPage() {
 
   return (
     <div className="container mx-auto py-10">
+      <div className="mb-8 border border-primary/30 bg-black/45 backdrop-blur-sm rounded-lg p-4 md:p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-4xl md:text-6xl font-black tracking-wide text-white uppercase">
+            {searchQuery ? `Resultados para "${searchQuery}"` : selectedCategory ? `Productos por categoria: ${selectedCategory}` : 'Productos por categoria'}
+          </h1>
+        </div>
+        <p className="text-gray-300 text-sm md:text-base">
+          Selecciona tu repuesto ideal con el estilo de <span className="text-primary font-bold">Kazuty Partz</span>.
+        </p>
+      </div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-          {searchQuery ? `Search Results for "${searchQuery}"` : selectedCategory ? `${selectedCategory}` : 'All Products'}
-        </h1>
+        <h2 className="font-brand text-xl font-bold text-primary uppercase tracking-widest">
+          {selectedCategory || 'Todos los productos'}
+        </h2>
         <button
-          onClick={() => setShowFilters(!showFilters)}
-          className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg md:hidden"
+          onClick={() => setShowFiltros(!showFiltros)}
+          className="flex items-center space-x-2 bg-black/60 text-white border border-primary/40 px-4 py-2 rounded-lg md:hidden"
         >
           <Filter className="h-5 w-5" />
-          <span>Filters</span>
+          <span>Filtros</span>
         </button>
       </div>
       
       <div className="flex flex-col md:flex-row gap-6">
-        {/* Filters Sidebar */}
-        <aside className={`md:w-1/4 ${showFilters ? 'block' : 'hidden md:block'} transition-all duration-300`}>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md sticky top-4">
+        {/* Filtros Sidebar */}
+        <aside className={`md:w-1/4 ${showFiltros ? 'block' : 'hidden md:block'} transition-all duration-300`}>
+          <div className="bg-black/60 backdrop-blur-sm p-6 rounded-lg border border-primary/30 shadow-md sticky top-4">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Filters
+              <h2 className="text-xl font-semibold text-white uppercase tracking-wider">
+                Filtros
               </h2>
               <button
-                onClick={resetFilters}
+                onClick={resetFiltros}
                 className="text-sm text-primary hover:underline"
               >
-                Reset
+                Reiniciar
               </button>
             </div>
             
-            {/* Categories */}
+            {/* Categorias */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                Categories
+              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+                Categorias
               </h3>
               <div className="space-y-2">
                 <div className="flex items-center">
@@ -177,9 +207,9 @@ export default function ProductsPage() {
                   />
                   <label
                     htmlFor="all-categories"
-                    className="ml-2 text-gray-700 dark:text-gray-300"
+                    className="font-brand ml-2 text-gray-200"
                   >
-                    All Categories
+                    Todas las categorias
                   </label>
                 </div>
                 {categories.map((category) => (
@@ -194,7 +224,7 @@ export default function ProductsPage() {
                     />
                     <label
                       htmlFor={category}
-                      className="ml-2 text-gray-700 dark:text-gray-300"
+                      className="font-brand ml-2 text-gray-200"
                     >
                       {category}
                     </label>
@@ -203,19 +233,15 @@ export default function ProductsPage() {
               </div>
             </div>
             
-            {/* Price Range */}
+            {/* Rango de precio */}
             <div className="mb-6">
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                Price Range
+              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+                Rango de precio
               </h3>
               <div className="space-y-4">
                 <div className="flex justify-between">
-                  <span className="text-gray-700 dark:text-gray-300">
-                    ${priceRange[0]}
-                  </span>
-                  <span className="text-gray-700 dark:text-gray-300">
-                    ${priceRange[1]}
-                  </span>
+                  <span className="text-gray-200">{formatARS(priceRange[0])}</span>
+                  <span className="text-gray-200">{formatARS(priceRange[1])}</span>
                 </div>
                 <input
                   type="range"
@@ -228,27 +254,32 @@ export default function ProductsPage() {
               </div>
             </div>
             
-            {/* Sort By */}
+            {/* Ordenar por */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                Sort By
+              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+                Ordenar por
               </h3>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-primary focus:ring-primary"
+                className="w-full p-2 border border-primary/40 rounded-md bg-black/60 text-white focus:border-primary focus:ring-primary"
               >
-                <option value="">Trending</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="newest">Newest First</option>
+                <option value="">Tendencias</option>
+                <option value="price-asc">Precio: menor a mayor</option>
+                <option value="price-desc">Precio: mayor a menor</option>
+                <option value="newest">Mas recientes primero</option>
               </select>
             </div>
           </div>
         </aside>
         
-        {/* Products Grid */}
+        {/* Productos Grid */}
         <div className="md:w-3/4">
+          {!isSupabaseConfigured ? (
+            <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4 text-amber-900">
+              Agrega <code>VITE_SUPABASE_URL</code> y <code>VITE_SUPABASE_ANON_KEY</code> en <code>.env</code> para cargar productos desde tu base.
+            </div>
+          ) : null}
           {loading ? (
             <div className="flex justify-center items-center h-64">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
@@ -270,7 +301,7 @@ export default function ProductsPage() {
             </div>
           ) : (
             <div className="text-center py-10">
-              <p className="text-gray-600 dark:text-gray-300">No products found.</p>
+              <p className="text-gray-200">No se encontraron productos.</p>
             </div>
           )}
         </div>
@@ -286,3 +317,5 @@ export default function ProductsPage() {
     </div>
   );
 }
+
+

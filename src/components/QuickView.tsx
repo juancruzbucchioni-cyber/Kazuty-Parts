@@ -1,7 +1,8 @@
-import { useState, useEffect, memo } from 'react';
+﻿import { useState, useEffect, memo } from 'react';
 import { X, ShoppingCart, Star, Plus, Minus } from 'lucide-react';
 import { Product } from '../types/supabase';
 import { useCartStore } from '../store/cartStore';
+import { formatARS } from '../lib/currency';
 
 interface QuickViewProps {
   product: Product;
@@ -10,14 +11,23 @@ interface QuickViewProps {
 
 const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) {
   const [quantity, setQuantity] = useState(1);
+  const availableColors = product.colors && product.colors.length > 0
+    ? product.colors
+    : ['Black', 'White', 'Gray'];
+  const [selectedColor, setSelectedColor] = useState<string>(availableColors[0]);
   const addItem = useCartStore((state) => state.addItem);
   const cartItems = useCartStore((state) => state.items);
   const updateQuantity = useCartStore((state) => state.updateQuantity);
   const [isInCart, setIsInCart] = useState(false);
 
   useEffect(() => {
+    setSelectedColor(availableColors[0]);
+  }, [product.id]);
+
+  useEffect(() => {
     // Check if product is already in cart
-    const cartItem = cartItems.find(item => item.id === product.id);
+    const cartItemId = selectedColor ? `${product.id}::${selectedColor}` : product.id;
+    const cartItem = cartItems.find(item => item.id === cartItemId);
     if (cartItem) {
       setQuantity(cartItem.quantity);
       setIsInCart(true);
@@ -25,19 +35,20 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
       setQuantity(1);
       setIsInCart(false);
     }
-  }, [product.id, cartItems]);
+  }, [product.id, cartItems, selectedColor]);
 
   const handleAddToCart = () => {
+    const cartItemId = selectedColor ? `${product.id}::${selectedColor}` : product.id;
     if (isInCart) {
       // If already in cart, update quantity
-      updateQuantity(product.id, quantity);
+      updateQuantity(cartItemId, quantity);
     } else {
       // If not in cart, add it
-      addItem(product);
+      addItem(product, selectedColor);
       
       // If quantity is more than 1, update the quantity
       if (quantity > 1) {
-        updateQuantity(product.id, quantity);
+        updateQuantity(`${product.id}::${selectedColor}`, quantity);
       }
     }
     onClose();
@@ -83,31 +94,52 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
               </span>
             </div>
             
-            <p className="text-xl font-bold text-primary mb-4">
-              ${product.price.toFixed(2)}
+            <p className="text-2xl font-black text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.55)] mb-4">
+              {formatARS(Math.round(product.price))}
             </p>
             
             <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-4">
               {product.description}
             </p>
+
+            <div className="mb-6">
+              <p className="text-gray-700 dark:text-gray-300 mb-2">
+                <span className="font-semibold">Color:</span>
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {availableColors.map((color) => (
+                  <button
+                    key={color}
+                    onClick={() => setSelectedColor(color)}
+                    className={`px-3 py-1 rounded-full border text-sm transition-colors ${
+                      selectedColor === color
+                        ? 'border-primary bg-primary text-white'
+                        : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {color}
+                  </button>
+                ))}
+              </div>
+            </div>
             
             <div className="mb-6">
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                <span className="font-semibold">Category:</span> {product.category}
+                <span className="font-semibold">Categoria:</span> {product.category}
               </p>
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                <span className="font-semibold">Availability:</span>{' '}
+                <span className="font-semibold">Disponibilidad:</span>{' '}
                 {product.stock > 0 ? (
-                  <span className="text-green-600 dark:text-green-400">In Stock ({product.stock} available)</span>
+                  <span className="text-green-600 dark:text-green-400">En stock ({product.stock} disponibles)</span>
                 ) : (
-                  <span className="text-red-600 dark:text-red-400">Out of Stock</span>
+                  <span className="text-red-600 dark:text-red-400">Sin stock</span>
                 )}
               </p>
             </div>
             
             <div className="flex items-center mb-6">
               <label htmlFor="quantity" className="mr-4 text-gray-700 dark:text-gray-300">
-                Quantity:
+                Cantidad:
               </label>
               <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded-md">
                 <button
@@ -137,7 +169,7 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
                 }`}
               >
                 <ShoppingCart className="w-5 h-5" />
-                <span>{product.stock > 0 ? (isInCart ? 'Update Cart' : 'Add to Cart') : 'Out of Stock'}</span>
+                <span>{product.stock > 0 ? (isInCart ? 'Actualizar carrito' : 'Agregar al carrito') : 'Sin stock'}</span>
               </button>
             </div>
           </div>
@@ -148,3 +180,5 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
 });
 
 export default QuickView;
+
+

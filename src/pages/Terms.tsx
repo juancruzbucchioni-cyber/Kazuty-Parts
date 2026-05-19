@@ -1,8 +1,8 @@
-export default function Terms() {
+﻿export default function Terms() {
   return (
     <section className="container py-10">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        Terms of Use
+        Terminos de uso
       </h1>
       <p className="text-gray-600 dark:text-gray-300">
         These are the terms of use. Include responsibilities, limitations of
@@ -11,3 +11,5 @@ export default function Terms() {
     </section>
   );
 }
+
+

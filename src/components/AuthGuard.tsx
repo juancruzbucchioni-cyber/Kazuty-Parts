@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+﻿import { ReactNode, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 
@@ -17,7 +17,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
       navigate('/auth', { 
         state: { 
           from: location.pathname,
-          message: 'Please sign in to access this page'
+          message: 'Inicia sesion para acceder a esta pagina'
         } 
       });
     }
@@ -35,3 +35,4 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   // If authenticated, render the protected content
   return user ? <>{children}</> : null;
 }
+

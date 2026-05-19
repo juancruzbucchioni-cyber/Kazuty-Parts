@@ -1,11 +1,11 @@
-import { Star } from 'lucide-react';
+﻿import { Star } from 'lucide-react';
 
 const testimonials = [
   {
     id: 1,
     name: 'Sarah Johnson',
     role: 'Fashion Enthusiast',
-    content: 'ModernShop has completely transformed my online shopping experience. The quality of products and the speed of delivery are unmatched!',
+    content: 'ModernTienda has completely transformed my online shopping experience. The quality of products and the speed of delivery are unmatched!',
     rating: 5,
     avatar: 'https://randomuser.me/api/portraits/women/32.jpg'
   },
@@ -13,7 +13,7 @@ const testimonials = [
     id: 2,
     name: 'Michael Chen',
     role: 'Tech Reviewer',
-    content: "I've purchased several electronics from ModernShop and have been impressed every time. Their customer service is exceptional.",
+    content: "I've purchased several electronics from ModernTienda and have been impressed every time. Their customer service is exceptional.",
     rating: 5,
     avatar: 'https://randomuser.me/api/portraits/men/46.jpg'
   },
@@ -80,3 +80,5 @@ export default function Testimonials() {
     </section>
   );
 }
+
+

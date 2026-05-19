@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { User, Package, CreditCard, LogOut, Edit, Save, X } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 import AuthGuard from '../components/AuthGuard';
 
-interface UserProfile {
+interface UserPerfil {
   id: string;
   username: string;
   full_name: string | null;
@@ -13,8 +13,8 @@ interface UserProfile {
   phone: string | null;
 }
 
-export default function Profile() {
-  const { user, profile, setProfile, signOut } = useAuthStore();
+export default function Perfil() {
+  const { user, profile, setPerfil, signOut } = useAuthStore();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
@@ -27,7 +27,7 @@ export default function Profile() {
   const [usernameError, setUsernameError] = useState('');
 
   useEffect(() => {
-    async function fetchProfile() {
+    async function fetchPerfil() {
       if (!user) return;
 
       try {
@@ -41,7 +41,7 @@ export default function Profile() {
         if (error) {
           console.error('Error fetching profile:', error);
         } else {
-          setProfile(data as UserProfile);
+          setPerfil(data as UserPerfil);
           setFormData({
             username: data?.username || '',
             full_name: data?.full_name || '',
@@ -56,8 +56,8 @@ export default function Profile() {
       }
     }
 
-    fetchProfile();
-  }, [user, setProfile]);
+    fetchPerfil();
+  }, [user, setPerfil]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -119,13 +119,13 @@ export default function Profile() {
       if (error) {
         console.error('Error updating profile:', error);
       } else {
-        setProfile({
+        setPerfil({
           id: user.id,
           username: formData.username,
           full_name: formData.full_name,
           address: formData.address,
           phone: formData.phone,
-        } as UserProfile);
+        } as UserPerfil);
         setIsEditing(false);
       }
     } catch (error) {
@@ -137,7 +137,7 @@ export default function Profile() {
     <AuthGuard>
       <section className="container py-10">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-          My Profile
+          Mi perfil
         </h1>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -159,14 +159,14 @@ export default function Profile() {
               <nav className="space-y-2">
                 <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg bg-primary/10 text-primary">
                   <User className="h-5 w-5" />
-                  <span>Profile</span>
+                  <span>Perfil</span>
                 </button>
                 <button 
                   onClick={() => navigate('/orders')}
                   className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   <Package className="h-5 w-5" />
-                  <span>Orders</span>
+                  <span>Pedidos</span>
                 </button>
                 <button className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                   <CreditCard className="h-5 w-5" />
@@ -177,7 +177,7 @@ export default function Profile() {
                   className="w-full flex items-center space-x-3 px-4 py-2 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
                 >
                   <LogOut className="h-5 w-5" />
-                  <span>Sign Out</span>
+                  <span>Cerrar sesion</span>
                 </button>
               </nav>
             </div>
@@ -203,7 +203,7 @@ export default function Profile() {
                     onClick={() => {
                       setIsEditing(false);
                       setUsernameError('');
-                      // Reset form data to current profile
+                      // Reiniciar form data to current profile
                       if (profile) {
                         setFormData({
                           username: profile.username || '',
@@ -400,3 +400,5 @@ export default function Profile() {
     </AuthGuard>
   );
 }
+
+

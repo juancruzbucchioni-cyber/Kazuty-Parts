@@ -1,17 +1,17 @@
-import { Users, Award, ShieldCheck, Truck } from 'lucide-react';
+﻿import { Users, Award, ShieldCheck, Truck } from 'lucide-react';
 
 export default function About() {
   return (
     <section className="container py-10">
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
-        About ModernShop
+        About ModernTienda
       </h1>
       
       {/* Hero Section */}
       <div className="relative mb-12">
         <img 
           src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" 
-          alt="ModernShop Team" 
+          alt="ModernTienda Team" 
           className="w-full h-64 md:h-96 object-cover rounded-lg"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-primary/60 to-secondary/60 rounded-lg"></div>
@@ -31,7 +31,7 @@ export default function About() {
           Our Mission
         </h2>
         <p className="text-gray-600 dark:text-gray-300 mb-4">
-          At ModernShop, our mission is to provide customers with high-quality products that enhance their everyday lives. We believe in creating a shopping experience that is seamless, enjoyable, and trustworthy.
+          At ModernTienda, our mission is to provide customers with high-quality products that enhance their everyday lives. We believe in creating a shopping experience that is seamless, enjoyable, and trustworthy.
         </p>
         <p className="text-gray-600 dark:text-gray-300">
           We're committed to sourcing products that meet our strict quality standards, offering exceptional customer service, and continuously improving our platform to meet the evolving needs of our customers.
@@ -99,7 +99,7 @@ export default function About() {
             </h3>
             <p className="text-primary font-medium">Founder & CEO</p>
             <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-              With over 15 years in retail, Sarah founded ModernShop with a vision to revolutionize online shopping.
+              With over 15 years in retail, Sarah founded ModernTienda with a vision to revolutionize online shopping.
             </p>
           </div>
           
@@ -129,7 +129,7 @@ export default function About() {
             </h3>
             <p className="text-primary font-medium">Head of Customer Experience</p>
             <p className="text-gray-600 dark:text-gray-300 text-center mt-2">
-              Emma ensures that every customer interaction with ModernShop exceeds expectations.
+              Emma ensures that every customer interaction with ModernTienda exceeds expectations.
             </p>
           </div>
         </div>
@@ -151,7 +151,7 @@ export default function About() {
                 Founded
               </h3>
               <p className="text-gray-600 dark:text-gray-300">
-                ModernShop was founded with a mission to provide quality products with exceptional service.
+                ModernTienda was founded with a mission to provide quality products with exceptional service.
               </p>
             </div>
           </div>
@@ -202,3 +202,5 @@ export default function About() {
     </section>
   );
 }
+
+
