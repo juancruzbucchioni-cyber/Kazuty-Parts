@@ -77,8 +77,9 @@ export default function FeaturedProductos() {
         Productos mas vendidos
       </h2>
       {!isSupabaseConfigured ? (
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-left text-amber-900">
-          Set up <code>.env</code> with <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_ANON_KEY</code> to load real products.
+        <div className="rounded-lg border border-[#C026FF]/35 bg-black/55 p-4 text-left text-gray-200 backdrop-blur-sm">
+          Configura <code className="text-[#C026FF]">VITE_SUPABASE_URL</code> y{' '}
+          <code className="text-[#C026FF]">VITE_SUPABASE_ANON_KEY</code> en <code>.env</code> para cargar productos reales.
         </div>
       ) : null}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
