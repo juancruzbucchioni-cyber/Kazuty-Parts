@@ -90,6 +90,7 @@ export default function CustomPanel() {
   const [categoryForm, setCategoryForm] = useState<CategoryForm>(emptyCategory);
   const [testimonialForm, setTestimonialForm] = useState<TestimonialForm>(emptyTestimonial);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState('');
 
   const isAdmin = Boolean(profile?.is_admin);
@@ -154,9 +155,15 @@ export default function CustomPanel() {
     const productId = (data as Product).id;
     const images = [payload.image_url, ...splitList(productForm.extra_images)].filter(Boolean);
 
-    await supabase.from('product_images').delete().eq('product_id', productId);
+    const { error: deleteImagesError } = await supabase.from('product_images').delete().eq('product_id', productId);
+    if (deleteImagesError) {
+      setMessage(`El producto se guardo, pero no se pudieron actualizar las imagenes: ${deleteImagesError.message}`);
+      setSaving(false);
+      return;
+    }
+
     if (images.length > 0) {
-      await supabase.from('product_images').insert(
+      const { error: imagesError } = await supabase.from('product_images').insert(
         images.map((imageUrl, index) => ({
           product_id: productId,
           image_url: imageUrl,
@@ -164,6 +171,12 @@ export default function CustomPanel() {
           display_order: index + 1,
         }))
       );
+
+      if (imagesError) {
+        setMessage(`El producto se guardo, pero no se pudieron guardar las imagenes extra: ${imagesError.message}`);
+        setSaving(false);
+        return;
+      }
     }
 
     setProductForm(emptyProduct);
@@ -188,6 +201,57 @@ export default function CustomPanel() {
         .join('\n'),
     });
     setActiveTab('products');
+  };
+
+  const uploadProductFiles = async (files: FileList | null, mode: 'main' | 'extra') => {
+    if (!files || files.length === 0) return;
+
+    setUploading(true);
+    setMessage('');
+
+    const uploadedUrls: string[] = [];
+
+    for (const file of Array.from(files)) {
+      const extension = file.name.split('.').pop() || 'jpg';
+      const safeName = file.name
+        .replace(/\.[^/.]+$/, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '');
+      const filePath = `products/${Date.now()}-${safeName}.${extension}`;
+
+      const { error } = await supabase.storage
+        .from('product-images')
+        .upload(filePath, file, { upsert: false });
+
+      if (error) {
+        setMessage(`No se pudo subir "${file.name}": ${error.message}`);
+        setUploading(false);
+        return;
+      }
+
+      const { data } = supabase.storage.from('product-images').getPublicUrl(filePath);
+      uploadedUrls.push(data.publicUrl);
+    }
+
+    setProductForm((current) => {
+      if (mode === 'main') {
+        const [mainImage, ...restImages] = uploadedUrls;
+        return {
+          ...current,
+          image_url: mainImage || current.image_url,
+          extra_images: [...splitList(current.extra_images), ...restImages].join('\n'),
+        };
+      }
+
+      return {
+        ...current,
+        extra_images: [...splitList(current.extra_images), ...uploadedUrls].join('\n'),
+      };
+    });
+
+    setMessage('Imagenes subidas correctamente. Ahora toca Guardar producto.');
+    setUploading(false);
   };
 
   const deleteProduct = async (productId: string) => {
@@ -361,13 +425,21 @@ export default function CustomPanel() {
             </div>
             <label className={labelClass}>Categoria<input required list="admin-categories" className={fieldClass} value={productForm.category} onChange={(e) => setProductForm({ ...productForm, category: e.target.value })} /></label>
             <datalist id="admin-categories">{categories.map((category) => <option key={category.id} value={category.name} />)}</datalist>
+            <label className={labelClass}>
+              Imagen principal
+              <input type="file" accept="image/*" className={fieldClass} disabled={uploading} onChange={(e) => uploadProductFiles(e.target.files, 'main')} />
+            </label>
             <label className={labelClass}>Imagen principal URL<input required className={fieldClass} value={productForm.image_url} onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })} /></label>
             <label className={labelClass}>Colores separados por coma<input className={fieldClass} value={productForm.colors} onChange={(e) => setProductForm({ ...productForm, colors: e.target.value })} /></label>
+            <label className={labelClass}>
+              Subir mas imagenes
+              <input type="file" accept="image/*" multiple className={fieldClass} disabled={uploading} onChange={(e) => uploadProductFiles(e.target.files, 'extra')} />
+            </label>
             <label className={labelClass}>Mas imagenes, una por linea<textarea className={`${fieldClass} min-h-20`} value={productForm.extra_images} onChange={(e) => setProductForm({ ...productForm, extra_images: e.target.value })} /></label>
             <div className="flex gap-2">
-              <button disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white disabled:opacity-60">
+              <button disabled={saving || uploading} className="inline-flex items-center gap-2 rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white disabled:opacity-60">
                 <Save className="h-4 w-4" />
-                Guardar
+                {uploading ? 'Subiendo...' : 'Guardar'}
               </button>
               <button type="button" onClick={() => setProductForm(emptyProduct)} className="rounded-md border border-white/20 px-4 py-2 text-gray-200">Limpiar</button>
             </div>
