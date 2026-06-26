@@ -1,45 +1,50 @@
-﻿import { Link } from 'react-router-dom';
-import { Instagram, Mail, Phone, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Instagram, MapPin, Phone } from 'lucide-react';
+
+const INSTAGRAM_URL = 'https://www.instagram.com/elvio.monteiro_1_2_3?igsh=MW5qZnRiZ3hibWYwMg==';
+const WHATSAPP_URL = 'https://wa.me/5493755745255?text=Hola%20Elvio%20Monteiro%2C%20quiero%20hacer%20una%20consulta.';
 
 export default function Footer() {
   return (
-    <footer className="bg-black/65 backdrop-blur-sm pt-12 pb-6 border-t border-[#C026FF]/30">
+    <footer className="border-t border-gray-200 bg-white pt-12 pb-6 text-black">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
           <div>
-            <img src="/branding/logo.png" alt="Kazuty Partz" className="h-12 w-auto mb-3" />
-            <p className="text-gray-200 text-sm mb-4">Tienda especializada en repuestos y estetica para motos.</p>
-            <div className="flex items-center gap-2 text-primary">
+            <p className="font-brand text-2xl font-black">ELVIO MONTEIRO</p>
+            <p className="mt-3 max-w-sm text-sm text-gray-700">
+              Tienda de repuestos, accesorios y soluciones para motos.
+            </p>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="mt-4 inline-flex items-center gap-2 font-bold hover:text-red-600">
               <Instagram className="h-5 w-5" />
-              <a href="https://instagram.com/kazuty_parts" target="_blank" rel="noreferrer" className="hover:underline">@kazuty_parts</a>
-            </div>
+              @elvio.monteiro_1_2_3
+            </a>
           </div>
 
           <div>
-            <h3 className="font-brand text-lg font-semibold text-[#C026FF] mb-4">Categorias</h3>
-            <ul className="space-y-2">
-              <li><Link to="/products?category=Accesorios" className="text-gray-200 hover:text-[#C026FF] transition-colors link-hover">Accesorios</Link></li>
-              <li><Link to="/products?category=Escapes" className="text-gray-200 hover:text-[#C026FF] transition-colors link-hover">Escapes</Link></li>
-              <li><Link to="/products?category=Plasticos" className="text-gray-200 hover:text-[#C026FF] transition-colors link-hover">Plasticos</Link></li>
+            <h3 className="font-brand mb-4 text-lg font-semibold">Categorias</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li><Link to="/products?category=Accesorios" className="hover:text-black">Accesorios</Link></li>
+              <li><Link to="/products?category=Escapes" className="hover:text-black">Escapes</Link></li>
+              <li><Link to="/products?category=Plasticos" className="hover:text-black">Plasticos</Link></li>
             </ul>
           </div>
 
           <div>
-            <h3 className="font-brand text-lg font-semibold text-[#C026FF] mb-4">Contacto</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start"><MapPin className="h-5 w-5 text-primary mr-2 mt-0.5" /><span className="text-gray-200">Argentina</span></li>
-              <li className="flex items-center"><Phone className="h-5 w-5 text-primary mr-2" /><a href="tel:3534128474" className="text-gray-200 hover:underline">3534128474</a></li>
-              <li className="flex items-center"><Mail className="h-5 w-5 text-primary mr-2" /><span className="text-gray-200">Instagram: kazuty_parts</span></li>
+            <h3 className="font-brand mb-4 text-lg font-semibold">Contacto</h3>
+            <ul className="space-y-3 text-gray-700">
+              <li className="flex items-start"><MapPin className="mr-2 mt-0.5 h-5 w-5 text-black" /><span>Argentina</span></li>
+              <li className="flex items-center"><Phone className="mr-2 h-5 w-5 text-black" /><a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-black">+54 9 3755 74-5255</a></li>
+              <li className="flex items-center"><Instagram className="mr-2 h-5 w-5 text-black" /><a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="hover:text-black">@elvio.monteiro_1_2_3</a></li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-[#C026FF]/30 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-300 text-sm">© {new Date().getFullYear()} Kazuty Partz. Todos los derechos reservados.</p>
-          <div className="flex space-x-6 mt-4 md:mt-0">
-            <Link to="/privacy" className="text-gray-300 text-sm hover:text-[#C026FF] link-hover">Privacidad</Link>
-            <Link to="/terms" className="text-gray-300 text-sm hover:text-[#C026FF] link-hover">Terminos</Link>
-            <Link to="/sitemap" className="text-gray-300 text-sm hover:text-[#C026FF] link-hover">Mapa del sitio</Link>
+        <div className="mt-8 flex flex-col items-center justify-between border-t border-gray-200 pt-6 md:flex-row">
+          <p className="text-sm text-gray-700">© {new Date().getFullYear()} Elvio Monteiro. Todos los derechos reservados. Desarrollado por Juan.bucchioni</p>
+          <div className="mt-4 flex space-x-6 md:mt-0">
+            <Link to="/privacy" className="text-sm text-gray-700 hover:text-black">Privacidad</Link>
+            <Link to="/terms" className="text-sm text-gray-700 hover:text-black">Terminos</Link>
+            <Link to="/sitemap" className="text-sm text-gray-700 hover:text-black">Mapa del sitio</Link>
           </div>
         </div>
       </div>

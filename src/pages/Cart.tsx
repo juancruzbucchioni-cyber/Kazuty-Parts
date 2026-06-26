@@ -6,7 +6,7 @@ import { formatARS } from '../lib/currency';
 
 type PaymentMethod = 'efectivo' | 'transferencia';
 
-const WHATSAPP_PHONE = '543534128474';
+const WHATSAPP_PHONE = '5493755745255';
 
 function paymentLabel(method: PaymentMethod) {
   switch (method) {
@@ -48,7 +48,7 @@ export default function Cart() {
     });
 
     const message =
-      `Hola Kazuty Partz, quiero comprar estos productos:\n\n` +
+      `Hola Elvio Monteiro, quiero comprar estos productos:\n\n` +
       `${lines.join('\n')}\n\n` +
       `Forma de pago: ${paymentLabel(paymentMethod)}\n` +
       `Total: ${formatARS(Math.round(total))}\n\n` +
@@ -68,7 +68,7 @@ export default function Cart() {
           <p className="text-gray-300 text-lg mb-6">Tu carrito está vacío.</p>
           <Link
             to="/products"
-            className="inline-block px-6 py-2 bg-primary text-white rounded-md hover:bg-violet-700 transition-colors btn-hover-scale btn-hover-shadow"
+          className="inline-block px-6 py-2 bg-black text-white rounded-md hover:bg-red-600 transition-colors btn-hover-scale btn-hover-shadow"
           >
             Seguir comprando
           </Link>
@@ -86,7 +86,7 @@ export default function Cart() {
                   <div>
                     <h2 className="text-lg font-semibold text-white">{item.name}</h2>
                     <p className="text-gray-300">{formatARS(Math.round(item.price))}</p>
-                    {item.color ? <p className="text-sm text-primary">Color: {item.color}</p> : null}
+                    {item.color ? <p className="text-sm text-gray-200">Color: {item.color}</p> : null}
                     <div className="flex items-center mt-2">
                       <button
                         onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
@@ -115,7 +115,7 @@ export default function Cart() {
             ))}
 
             <div className="mt-6">
-              <Link to="/products" className="inline-flex items-center text-primary hover:text-violet-300 transition-colors link-hover">
+              <Link to="/products" className="inline-flex items-center text-white hover:text-red-300 transition-colors link-hover">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Seguir comprando
               </Link>
@@ -136,7 +136,7 @@ export default function Cart() {
               <div className="border-t border-gray-700 pt-2 mt-2">
                 <div className="flex justify-between font-semibold text-lg text-white">
                   <span>Total</span>
-                  <span className="text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.6)]">{formatARS(Math.round(total))}</span>
+                  <span className="text-white">{formatARS(Math.round(total))}</span>
                 </div>
               </div>
             </div>
@@ -149,7 +149,7 @@ export default function Cart() {
                 id="payment-method"
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
-                className="w-full p-2 border border-primary/40 rounded-md bg-black/60 text-white focus:border-primary focus:ring-primary"
+                className="w-full p-2 border border-white/30 rounded-md bg-black/60 text-white focus:border-white focus:ring-white"
               >
                 <option value="transferencia">Transferencia</option>
                 <option value="efectivo">Efectivo</option>
@@ -158,7 +158,7 @@ export default function Cart() {
 
             <button
               onClick={checkoutByWhatsApp}
-              className="w-full flex items-center justify-center bg-primary text-white px-6 py-3 rounded-lg hover:bg-violet-700 transition-colors btn-hover-scale"
+              className="w-full flex items-center justify-center bg-white text-black px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors btn-hover-scale"
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               Comprar por WhatsApp

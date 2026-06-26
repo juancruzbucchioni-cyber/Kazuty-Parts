@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, User, LogOut, Instagram, Search } from 'lucide-react';
+import { Headphones, Instagram, LogOut, Search, ShoppingCart, User } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
+
+const INSTAGRAM_URL = 'https://www.instagram.com/elvio.monteiro_1_2_3?igsh=MW5qZnRiZ3hibWYwMg==';
+const WHATSAPP_URL = 'https://wa.me/5493755745255?text=Hola%20Elvio%20Monteiro%2C%20quiero%20consultar%20por%20productos.';
 
 export default function Navbar() {
   const cartItems = useCartStore((state) => state.items);
@@ -11,7 +14,7 @@ export default function Navbar() {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const { user, profile, signOut } = useAuthStore();
-  const displayName = profile?.username || user?.email?.split('@')[0] || 'Cliente';
+  const displayName = profile?.username || user?.email?.split('@')[0] || 'Mi cuenta';
 
   const handleSignOut = async () => {
     await signOut();
@@ -19,107 +22,90 @@ export default function Navbar() {
     setIsMenuOpen(false);
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSearch = (event: React.FormEvent) => {
+    event.preventDefault();
     if (!searchQuery.trim()) return;
     navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
     setSearchQuery('');
   };
 
-  const handleGoHomeTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
-    <nav className="sticky top-0 z-50 bg-black/55 backdrop-blur-sm shadow-md border-b border-[#C026FF]/30">
-      <div className="container flex items-center justify-between h-14">
-        <Link to="/" onClick={handleGoHomeTop} className="flex items-center gap-2 text-white">
-          <img src="/branding/logo.png" alt="Kazuty Partz" className="h-9 w-auto" />
-          <span className="font-brand font-bold text-lg hidden sm:block">
-            <span className="text-primary">KAZUTY</span> <span className="text-gray-200">PARTZ</span>
-          </span>
+    <nav className="sticky top-0 z-50 border-b border-white/10 bg-black text-white">
+      <div className="container flex min-h-24 flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <Link to="/" className="flex items-center">
+          <div className="leading-none">
+            <p className="font-brand text-2xl font-black tracking-wide text-white md:text-3xl">ELVIO</p>
+            <p className="text-xl font-black italic tracking-wide text-red-500 md:text-2xl">Monteiro</p>
+          </div>
         </Link>
 
-        <form onSubmit={handleSearch} className="hidden md:flex items-center mx-4 flex-1 max-w-xs">
-          <div className="relative w-full">
+        <form onSubmit={handleSearch} className="order-3 w-full lg:order-none lg:max-w-2xl">
+          <div className="relative">
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Buscar..."
-              className="w-full h-8 rounded-md border border-[#C026FF]/40 bg-black/45 px-8 pr-2 text-xs text-white placeholder:text-gray-300 focus:outline-none focus:ring-1 focus:ring-primary"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="¿Qué estás buscando?"
+              className="h-12 w-full rounded-xl border border-white/80 bg-black px-5 pr-12 text-base text-white placeholder:text-white/80 focus:outline-none focus:ring-2 focus:ring-white"
             />
-            <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#C026FF]" />
+            <Search className="absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 text-white" />
           </div>
         </form>
 
-        <div className="flex items-center space-x-2">
-          <a
-            href="https://instagram.com/kazuty_parts"
-            target="_blank"
-            rel="noreferrer"
-            className="p-1.5 rounded-full hover:bg-[#C026FF]/15 text-primary"
-            aria-label="Instagram"
-          >
-            <Instagram className="h-4 w-4" />
+        <div className="flex items-center justify-between gap-4 lg:justify-end">
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 text-sm text-white hover:text-red-400">
+            <Headphones className="h-7 w-7" />
+            <span>Ayuda</span>
           </a>
-          <a
-            href="https://wa.me/543534128474?text=Hola%20Kazuty%20Partz%2C%20quiero%20consultar%20por%20productos."
-            target="_blank"
-            rel="noreferrer"
-            className="px-3 py-1 rounded-md border border-[#C026FF] bg-[#C026FF]/10 text-xs font-bold tracking-wide text-[#C026FF] hover:bg-[#C026FF]/20 transition-colors"
-            aria-label="WhatsApp"
-          >
-            Contacto
+          <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 text-sm text-white hover:text-red-400">
+            <Instagram className="h-7 w-7" />
+            <span>Instagram</span>
           </a>
-          <Link to="/cart" className="relative p-1.5 rounded-full hover:bg-[#C026FF]/15" aria-label="Carrito">
-            <ShoppingCart className="h-4 w-4 text-gray-200 hover:text-primary transition-colors" />
-            {itemCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-semibold rounded-full h-3.5 w-3.5 flex items-center justify-center text-[10px]">
-                {itemCount}
-              </span>
-            )}
-          </Link>
           {user ? (
             <div className="relative">
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex items-center text-gray-200 hover:text-primary transition-colors p-1.5 rounded-full hover:bg-[#C026FF]/15"
-                aria-label="Perfil"
-              >
-                <User className="h-4 w-4" />
-                <span className="hidden md:inline text-xs ml-1">{displayName}</span>
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex flex-col items-center gap-1 text-sm text-white hover:text-red-400">
+                <User className="h-7 w-7" />
+                <span>{displayName}</span>
               </button>
               {isMenuOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-10 border dark:border-gray-700">
-                  <Link
-                    to="/profile"
-                    className="block px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
+                <div className="absolute right-0 mt-3 w-48 rounded-md border border-gray-200 bg-white py-1 text-black shadow-lg">
+                  <Link to="/profile" className="block px-4 py-2 text-sm hover:bg-gray-100" onClick={() => setIsMenuOpen(false)}>
                     Perfil
                   </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="block w-full text-left px-4 py-2 text-xs text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary"
-                  >
-                    <div className="flex items-center">
-                      <LogOut className="h-3 w-3 mr-2" />
-                      Cerrar sesion
-                    </div>
+                  <button onClick={handleSignOut} className="flex w-full items-center px-4 py-2 text-left text-sm hover:bg-gray-100">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Cerrar sesión
                   </button>
                 </div>
               )}
             </div>
           ) : (
-            <Link
-              to="/auth"
-              className="text-gray-200 hover:text-primary transition-colors flex items-center p-1.5 rounded-full hover:bg-[#C026FF]/15"
-            >
-              <User className="h-4 w-4" />
-              <span className="hidden md:inline text-xs ml-1">Ingresar</span>
+            <Link to="/auth" className="flex flex-col items-center gap-1 text-sm text-white hover:text-red-400">
+              <User className="h-7 w-7" />
+              <span>Mi cuenta</span>
             </Link>
           )}
+          <Link to="/cart" className="relative flex flex-col items-center gap-1 text-sm text-white hover:text-red-400">
+            <ShoppingCart className="h-8 w-8" />
+            {itemCount > 0 && (
+              <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-black">
+                {itemCount}
+              </span>
+            )}
+            <span>Mi carrito</span>
+          </Link>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10">
+        <div className="container flex flex-wrap items-center justify-center gap-6 py-4 text-base font-medium tracking-wide md:gap-10 md:text-lg">
+          <Link to="/" className="hover:text-red-400">Inicio</Link>
+          <Link to="/products" className="hover:text-red-400">Productos</Link>
+          <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-red-400">Contacto</a>
+          <Link to="/about" className="hover:text-red-400">Quiénes Somos</Link>
+          <Link to="/shipping" className="hover:text-red-400">Cómo Comprar</Link>
+          <Link to="/faq" className="hover:text-red-400">Preguntas Frecuentes</Link>
+          <Link to="/products" className="hover:text-red-400">Mayorista</Link>
         </div>
       </div>
     </nav>
