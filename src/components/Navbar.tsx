@@ -43,7 +43,7 @@ export default function Navbar() {
         <Link to="/" className="flex items-center">
           <div className={`rounded-lg bg-white/95 shadow-sm transition-all duration-300 ${isScrolled ? 'px-2 py-1' : 'px-3 py-2'}`}>
             <img
-              src="/branding/logo-elvio.png"
+              src="/branding/navbar-logo-elvio.png"
               alt="Elvio Monteiro"
               className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}
             />
@@ -124,3 +124,4 @@ export default function Navbar() {
     </nav>
   );
 }
+
