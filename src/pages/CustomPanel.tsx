@@ -41,6 +41,15 @@ type AdminCategory = Category & {
   orden?: number;
 };
 
+type BulkProductRow = {
+  name: string;
+  category?: string;
+  price?: number;
+  stock?: number;
+  colors?: string[];
+  image_url?: string;
+};
+
 const emptyProduct: ProductForm = {
   name: '',
   description: '',
@@ -79,6 +88,91 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
+function normalizeMatch(value: string) {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+function parseMoney(value: string) {
+  const cleanValue = value
+    .replace(/[^\d.,-]/g, '')
+    .replace(/\.(?=\d{3}(\D|$))/g, '')
+    .replace(',', '.');
+  const parsed = Number(cleanValue);
+  return Number.isFinite(parsed) ? Math.round(parsed) : undefined;
+}
+
+function parseBulkCatalog(text: string): BulkProductRow[] {
+  return text
+    .split('\n')
+    .map((line) => line.trim().replace(/^[-*•]\s*/, ''))
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split(/[|;\t]/).map((part) => part.trim()).filter(Boolean);
+
+      if (parts.length >= 3) {
+        return {
+          name: parts[0],
+          category: parts[1],
+          price: parseMoney(parts[2]),
+          stock: parts[3] ? Number(parts[3].replace(/\D/g, '')) : undefined,
+          colors: parts[4] ? splitList(parts[4]) : undefined,
+          image_url: parts[5],
+        };
+      }
+
+      const name = line
+        .replace(/\b(categoria|cat|precio|stock|colores?|color|imagen|foto|url)\s*[:=]\s*[^|;]+/gi, '')
+        .replace(/\$\s*[\d.,]+/g, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim();
+      const category = line.match(/\b(?:categoria|cat)\s*[:=]\s*([^|;]+)/i)?.[1]?.trim();
+      const price = parseMoney(line.match(/(?:\$|precio\s*[:=]\s*)([\d.,]+)/i)?.[1] || '');
+      const stockMatch = line.match(/\bstock\s*[:=]?\s*(\d+)/i);
+      const colors = line.match(/\bcolores?\s*[:=]\s*([^|;]+)/i)?.[1];
+      const imageUrl = line.match(/\b(?:imagen|foto|url)\s*[:=]\s*(https?:\/\/\S+|\/\S+)/i)?.[1];
+
+      return {
+        name,
+        category,
+        price,
+        stock: stockMatch ? Number(stockMatch[1]) : undefined,
+        colors: colors ? splitList(colors) : undefined,
+        image_url: imageUrl,
+      };
+    })
+    .filter((row) => row.name);
+}
+
+function findMatchingProduct(row: BulkProductRow, productsByName: Map<string, Product>) {
+  const normalizedName = normalizeMatch(row.name);
+  const exactMatch = productsByName.get(normalizedName);
+
+  if (exactMatch) {
+    return exactMatch;
+  }
+
+  const compactName = normalizedName.replace(/\s/g, '');
+  for (const [productName, product] of productsByName) {
+    const compactProductName = productName.replace(/\s/g, '');
+
+    if (
+      compactProductName === compactName ||
+      compactProductName.includes(compactName) ||
+      compactName.includes(compactProductName)
+    ) {
+      return product;
+    }
+  }
+
+  return undefined;
+}
+
 export default function CustomPanel() {
   const { user, profile, loading } = useAuthStore();
   const [activeTab, setActiveTab] = useState<'products' | 'categories' | 'testimonials'>('products');
@@ -91,6 +185,7 @@ export default function CustomPanel() {
   const [testimonialForm, setTestimonialForm] = useState<TestimonialForm>(emptyTestimonial);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [bulkText, setBulkText] = useState('');
   const [message, setMessage] = useState('');
 
   const isAdmin = Boolean(profile?.is_admin);
@@ -99,6 +194,14 @@ export default function CustomPanel() {
     const totalStock = products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
     const lowStock = products.filter((product) => Number(product.stock || 0) <= 3).length;
     return { totalStock, lowStock };
+  }, [products]);
+
+  const sortedProducts = useMemo(() => {
+    return [...products].sort((a, b) => {
+      const categoryCompare = a.category.localeCompare(b.category, 'es', { sensitivity: 'base' });
+      if (categoryCompare !== 0) return categoryCompare;
+      return a.name.localeCompare(b.name, 'es', { sensitivity: 'base' });
+    });
   }, [products]);
 
   const loadData = async () => {
@@ -183,6 +286,72 @@ export default function CustomPanel() {
     setMessage('Producto guardado correctamente.');
     setSaving(false);
     await loadData();
+  };
+
+  const applyBulkCatalog = async () => {
+    const rows = parseBulkCatalog(bulkText);
+
+    if (rows.length === 0) {
+      setMessage('Pega al menos una linea para actualizar.');
+      return;
+    }
+
+    setSaving(true);
+    setMessage('');
+
+    let updated = 0;
+    let created = 0;
+    const errors: string[] = [];
+    const productsByName = new Map(products.map((product) => [normalizeMatch(product.name), product]));
+
+    for (const row of rows) {
+      const currentProduct = findMatchingProduct(row, productsByName);
+      const payload = {
+        name: currentProduct?.name || row.name.trim(),
+        description: currentProduct?.description || 'Producto cargado desde actualizacion rapida.',
+        price: row.price ?? currentProduct?.price ?? 0,
+        stock: row.stock ?? currentProduct?.stock ?? 0,
+        category: row.category || currentProduct?.category || '',
+        image_url: row.image_url || currentProduct?.image_url || '/branding/logo-elvio.png',
+        colors: row.colors && row.colors.length > 0 ? row.colors : currentProduct?.colors || ['Consultar'],
+      };
+
+      if (!payload.category) {
+        errors.push(`${row.name}: falta categoria para crearlo.`);
+        continue;
+      }
+
+      const request = currentProduct
+        ? supabase.from('products').update(payload).eq('id', currentProduct.id).select().single()
+        : supabase.from('products').insert(payload).select().single();
+
+      const { data, error } = await request;
+
+      if (error) {
+        errors.push(`${row.name}: ${error.message}`);
+        continue;
+      }
+
+      const savedProduct = data as Product;
+      productsByName.set(normalizeMatch(savedProduct.name), savedProduct);
+
+      if (currentProduct) {
+        updated += 1;
+      } else {
+        created += 1;
+      }
+    }
+
+    setSaving(false);
+    await loadData();
+
+    if (errors.length > 0) {
+      setMessage(`Actualizados: ${updated}. Creados: ${created}. Revisar: ${errors.join(' / ')}`);
+      return;
+    }
+
+    setBulkText('');
+    setMessage(`Listo. Actualizados: ${updated}. Creados: ${created}.`);
   };
 
   const editProduct = (product: Product) => {
@@ -445,16 +614,47 @@ export default function CustomPanel() {
             </div>
           </form>
 
-          <div className={`${panelClass} overflow-x-auto`}>
-            <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="text-white"><tr><th className="p-2">Producto</th><th className="p-2">Categoria</th><th className="p-2">Precio</th><th className="p-2">Stock</th><th className="p-2">Acciones</th></tr></thead>
-              <tbody>{products.map((product) => (
-                <tr key={product.id} className="border-t border-white/10 text-gray-200">
-                  <td className="p-2">{product.name}</td><td className="p-2">{product.category}</td><td className="p-2 text-white">{formatARS(Math.round(product.price))}</td><td className="p-2">{product.stock}</td>
-                  <td className="flex gap-2 p-2"><button onClick={() => editProduct(product)} className="rounded bg-white/10 p-2"><Edit className="h-4 w-4" /></button><button onClick={() => deleteProduct(product.id)} className="rounded bg-red-500/20 p-2 text-red-300"><Trash2 className="h-4 w-4" /></button></td>
-                </tr>
-              ))}</tbody>
-            </table>
+          <div className="space-y-6">
+            <div className={`${panelClass} space-y-3`}>
+              <div>
+                <h2 className="text-xl font-bold text-white">Actualizacion rapida por texto</h2>
+                <p className="mt-1 text-sm text-gray-300">
+                  Pega una linea por producto. El sistema detecta por nombre si debe actualizar uno existente o crear uno nuevo.
+                </p>
+              </div>
+              <textarea
+                className={`${fieldClass} min-h-36 font-mono text-xs`}
+                value={bulkText}
+                onChange={(event) => setBulkText(event.target.value)}
+                placeholder={`Escape GRS | Escapes | 250000 | 3 | Rojo, Negro\nKit cilindro 190 | Motor | 148373 | 2\nFiltro XR precio=35000 stock=6 categoria=Accesorios`}
+              />
+              <div className="rounded-md border border-white/10 bg-white/5 p-3 text-xs text-gray-300">
+                <p className="font-bold text-white">Formato recomendado:</p>
+                <p>Producto | Categoria | Precio | Stock | Colores</p>
+                <p className="mt-1">Ordena automatico por categoria y nombre. Para dejarlo como consulta: usa precio 0.</p>
+              </div>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={applyBulkCatalog}
+                className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-bold text-black disabled:opacity-60"
+              >
+                <Save className="h-4 w-4" />
+                Actualizar catalogo
+              </button>
+            </div>
+
+            <div className={`${panelClass} overflow-x-auto`}>
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="text-white"><tr><th className="p-2">Producto</th><th className="p-2">Categoria</th><th className="p-2">Precio</th><th className="p-2">Stock</th><th className="p-2">Acciones</th></tr></thead>
+                <tbody>{sortedProducts.map((product) => (
+                  <tr key={product.id} className="border-t border-white/10 text-gray-200">
+                    <td className="p-2">{product.name}</td><td className="p-2">{product.category}</td><td className="p-2 text-white">{formatARS(Math.round(product.price))}</td><td className="p-2">{product.stock}</td>
+                    <td className="flex gap-2 p-2"><button onClick={() => editProduct(product)} className="rounded bg-white/10 p-2"><Edit className="h-4 w-4" /></button><button onClick={() => deleteProduct(product.id)} className="rounded bg-red-500/20 p-2 text-red-300"><Trash2 className="h-4 w-4" /></button></td>
+                  </tr>
+                ))}</tbody>
+              </table>
+            </div>
           </div>
         </div>
       ) : null}
