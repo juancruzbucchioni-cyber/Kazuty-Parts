@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 import FeaturedProducts from '../components/FeaturedProducts';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
 import { Product, Testimonial } from '../types/supabase';
-import { formatARS } from '../lib/currency';
+import ProductCard from '../components/ProductCard';
+import { useCartStore } from '../store/cartStore';
 
 type ClientReview = {
   nombre: string;
@@ -15,6 +16,7 @@ export default function Home() {
   const [clientReviews, setClientReviews] = useState<ClientReview[]>([]);
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [allCategories, setAllCategories] = useState<string[]>([]);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
     async function loadReviews() {
@@ -182,14 +184,9 @@ export default function Home() {
                   <Link
                     key={product.id}
                     to={`/products/${product.id}`}
-                    className="bg-black/55 backdrop-blur-sm border border-[#C026FF]/30 rounded-lg overflow-hidden hover:scale-[1.02] transition-transform"
+                    className="block h-full"
                   >
-                    <img src={product.image_url} alt={product.name} className="w-full h-44 object-cover" />
-                    <div className="p-3">
-                      <p className="text-xs text-gray-300 uppercase tracking-wider">{product.category}</p>
-                      <h4 className="text-white font-semibold mt-1 line-clamp-2">{product.name}</h4>
-                      <p className="text-[#C026FF] font-extrabold mt-2">{formatARS(Math.round(product.price))}</p>
-                    </div>
+                    <ProductCard product={product} onAddToCart={addItem} />
                   </Link>
                 ))}
               </div>

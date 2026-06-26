@@ -122,11 +122,7 @@ html,
 body {
   min-height: 100%;
   @apply text-text dark:text-textLight transition-colors duration-300;
-  background-image: linear-gradient(rgba(4, 4, 8, 0.72), rgba(4, 4, 8, 0.72)), url('/branding/site-bg-kazuty.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background: #000;
 }
 
 body {
@@ -160,6 +156,41 @@ body {
 /* Card shadow */
 .card {
   @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-all duration-300;
+}
+
+.product-sale-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 28px;
+  background: #000;
+  box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+}
+
+.product-sale-card::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  bottom: 0;
+  height: 3px;
+  background: #fff;
+  opacity: 0;
+  transform: scaleX(0.35);
+  transform-origin: center;
+  transition: opacity 220ms ease, transform 220ms ease;
+}
+
+.product-sale-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.42);
+  box-shadow: 0 18px 34px rgba(255, 255, 255, 0.18);
+}
+
+.product-sale-card:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
 }
 
 /* Modern accent borders */

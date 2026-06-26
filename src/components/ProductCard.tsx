@@ -1,6 +1,6 @@
-﻿import { ShoppingCart, Heart } from 'lucide-react';
+import { Eye, ShoppingCart } from 'lucide-react';
 import { Product } from '../types/supabase';
-import { useState, useEffect, memo } from 'react';
+import { useEffect, memo, useState } from 'react';
 import { useCartStore } from '../store/cartStore';
 import { CartState } from '../types/cart';
 import { formatARS } from '../lib/currency';
@@ -16,114 +16,103 @@ const ProductCard = memo(function ProductCard({
   onAddToCart,
   onQuickView,
 }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
   const cartItems = useCartStore((state: CartState) => state.items);
   const [isInCart, setIsInCart] = useState(false);
-  
+
   useEffect(() => {
-    // Check if product is in cart
     const cartItem = cartItems.find((item: { product_id: string }) => item.product_id === product.id);
-    setIsInCart(!!cartItem);
+    setIsInCart(Boolean(cartItem));
   }, [cartItems, product.id]);
-  
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Check if product is already in cart
+
+  const handleAddToCart = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
     const existingItem = cartItems.find((item: { product_id: string }) => item.product_id === product.id);
     if (existingItem) {
-      // If already in cart, increment quantity by 1
-      const newQuantity = existingItem.quantity + 1;
-      useCartStore.getState().updateQuantity(existingItem.id, newQuantity);
-    } else {
-      // If not in cart, add it
-      onAddToCart(product);
+      useCartStore.getState().updateQuantity(existingItem.id, existingItem.quantity + 1);
+      return;
     }
-  };
-  
-  const handleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsWishlisted(!isWishlisted);
+
+    onAddToCart(product);
   };
 
-  const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (onQuickView) {
-      onQuickView(product);
-    }
+  const handleQuickView = (event: React.MouseEvent) => {
+    if (!onQuickView) return;
+    event.preventDefault();
+    event.stopPropagation();
+    onQuickView(product);
   };
 
   return (
-    <div 
+    <div
       onClick={handleQuickView}
-      className="bg-black/55 backdrop-blur-sm border border-primary/30 rounded-lg shadow-md overflow-hidden h-full flex flex-col will-change-transform cursor-pointer hover:shadow-[0_0_20px_rgba(168,85,247,0.25)] transition-all duration-500 ease-in-out transform hover:-translate-y-1"
+      className="product-sale-card group flex h-full cursor-pointer flex-col will-change-transform"
     >
-      <div className="relative group">
+      <div className="relative overflow-hidden rounded-t-[28px] bg-[#f1f1f1]">
         <img
           src={product.image_url}
           alt={product.name}
-          className="w-full h-48 object-cover transform transition-transform duration-500 ease-in-out group-hover:scale-110"
+          className="h-64 w-full object-contain p-4 transition-transform duration-500 ease-in-out group-hover:scale-105"
           loading="lazy"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent"></div>
-        <div className="absolute top-3 left-3 bg-primary/20 border border-primary/60 text-primary px-3 py-1 rounded-sm text-xs font-bold uppercase tracking-widest">
-          {product.stock > 0 ? 'Disponible' : 'Sin stock'}
+        <div className="absolute left-4 top-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-400 text-center text-[11px] font-black uppercase leading-tight text-black">
+          Stock
         </div>
-        <button 
-          onClick={handleWishlist}
-          className="absolute top-3 right-3 p-1.5 bg-black/50 rounded-full shadow-sm hover:bg-black/70 transition-all duration-300 ease-in-out transform hover:scale-110"
-          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
-        >
-          <Heart 
-            className={`w-5 h-5 transition-colors duration-200 ${isWishlisted ? 'text-red-500 fill-current' : 'text-gray-300'}`} 
-          />
-        </button>
         {product.stock <= 5 && product.stock > 0 && (
-          <div className="absolute bottom-3 left-3 bg-red-500/90 text-white px-2 py-1 rounded-md text-xs font-medium">
+          <div className="absolute left-4 top-20 rounded-full bg-emerald-400 px-3 py-2 text-xs font-black uppercase text-black">
             Quedan {product.stock}
           </div>
         )}
         {product.stock === 0 && (
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-md text-sm font-bold">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/55">
+            <span className="rounded-md bg-red-500 px-3 py-1 text-sm font-bold text-white">
               Sin stock
             </span>
           </div>
         )}
       </div>
-      
-      <div className="p-4 flex flex-col flex-grow">
-        <p className="text-[11px] uppercase tracking-[0.25em] text-primary mb-1">
+
+      <div className="flex flex-grow flex-col border-t border-white/15 p-5 text-center">
+        <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.25em] text-emerald-400">
           {product.category}
         </p>
-        <h3 className="text-2xl font-black text-white leading-tight">
+        <h3 className="min-h-14 text-xl font-bold leading-tight text-white">
           {product.name}
         </h3>
-        <p className="text-gray-300 mt-2 flex-grow line-clamp-2">
+        <p className="mt-3 line-clamp-2 flex-grow text-sm text-gray-300">
           {product.description}
         </p>
-        <div className="mt-3">
-          <p className="text-4xl font-black text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.55)] leading-none">
+        <div className="mt-4">
+          <p className="text-3xl font-black leading-none text-white">
             {formatARS(Math.round(product.price))}
           </p>
+          <p className="mt-2 text-sm font-black uppercase leading-tight text-emerald-400">
+            Precio especial por transferencia
+          </p>
         </div>
-        <div className="mt-auto pt-4">
+        <div className="mt-auto grid grid-cols-2 gap-3 pt-5">
           <button
             onClick={handleAddToCart}
             disabled={product.stock === 0}
-            className={`w-full flex items-center justify-center space-x-2 py-2 rounded-md transition-all duration-300 ease-in-out transform hover:scale-105 active:scale-95 ${
+            className={`flex items-center justify-center gap-2 rounded-full py-3 text-sm font-black uppercase transition-all duration-300 active:scale-95 ${
               product.stock > 0
-                ? 'bg-primary text-white hover:bg-violet-700 shadow-md hover:shadow-lg'
-                : 'bg-gray-500/60 text-gray-300 cursor-not-allowed'
+                ? 'bg-white text-black hover:bg-gray-200'
+                : 'cursor-not-allowed bg-gray-500/60 text-gray-300'
             }`}
-            aria-label={product.stock > 0 ? (isInCart ? "Actualizar carrito" : "Agregar al carrito") : "Sin stock"}
+            aria-label={product.stock > 0 ? (isInCart ? 'Actualizar carrito' : 'Agregar al carrito') : 'Sin stock'}
           >
-            <ShoppingCart className="w-5 h-5" />
-            <span>{product.stock > 0 ? (isInCart ? 'Actualizar carrito' : 'Agregar al carrito') : 'Sin stock'}</span>
+            <ShoppingCart className="h-5 w-5" />
+            <span>{product.stock > 0 ? (isInCart ? 'Listo' : 'Comprar') : 'Sin stock'}</span>
+          </button>
+          <button
+            onClick={handleQuickView}
+            className="flex items-center justify-center gap-2 rounded-full border border-white/70 py-3 text-sm font-black uppercase text-white transition-all duration-300 hover:bg-white hover:text-black"
+            aria-label="Ver producto"
+          >
+            <Eye className="h-4 w-4" />
+            Ver
           </button>
         </div>
       </div>
@@ -132,5 +121,3 @@ const ProductCard = memo(function ProductCard({
 });
 
 export default ProductCard;
-
-
