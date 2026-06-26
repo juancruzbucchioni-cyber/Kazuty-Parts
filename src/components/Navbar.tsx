@@ -113,6 +113,14 @@ export default function Navbar() {
           <div className="container flex flex-wrap items-center justify-center gap-6 py-4 text-base font-medium tracking-wide md:gap-10 md:text-lg">
             <Link to="/" className="hover:text-gray-300">Inicio</Link>
             <Link to="/products" className="hover:text-gray-300">Productos</Link>
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-white/40 bg-white px-4 py-1.5 text-sm font-black uppercase tracking-[0.22em] text-black shadow-[0_0_18px_rgba(255,255,255,0.18)] transition-colors hover:bg-gray-200 md:text-base"
+            >
+              Comunidad
+            </a>
             <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-gray-300">Contacto</a>
           </div>
         </div>
