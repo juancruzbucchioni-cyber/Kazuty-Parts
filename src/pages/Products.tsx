@@ -191,7 +191,7 @@ export default function ProductosPage() {
           </h1>
         </div>
         <p className="text-gray-300 text-sm md:text-base">
-          Selecciona tu repuesto ideal con el estilo de <span className="text-primary font-bold">Kazuty Partz</span>.
+          Selecciona tu repuesto ideal con el estilo de <span className="text-primary font-bold">Elvio Monteiro</span>.
         </p>
       </div>
       <div className="flex justify-between items-center mb-6">
@@ -225,7 +225,7 @@ export default function ProductosPage() {
             
             {/* Categorias */}
             <div className="mb-6">
-              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+              <h3 className="font-brand text-lg font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] mb-3">
                 Categorias
               </h3>
               <div className="space-y-2">
@@ -268,7 +268,7 @@ export default function ProductosPage() {
             
             {/* Rango de precio */}
             <div className="mb-6">
-              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+              <h3 className="font-brand text-lg font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] mb-3">
                 Rango de precio
               </h3>
               <div className="space-y-4">
@@ -289,7 +289,7 @@ export default function ProductosPage() {
             
             {/* Ordenar por */}
             <div>
-              <h3 className="font-brand text-lg font-medium text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.5)] mb-3">
+              <h3 className="font-brand text-lg font-medium text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] mb-3">
                 Ordenar por
               </h3>
               <select
@@ -321,7 +321,7 @@ export default function ProductosPage() {
             <div className="space-y-10">
               {groupedProducts.map((block) => (
                 <section key={block.category}>
-                  <h3 className="font-brand mb-4 text-2xl font-bold text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.55)]">
+                  <h3 className="font-brand mb-4 text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)]">
                     {block.category}
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">

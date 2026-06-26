@@ -205,7 +205,7 @@ export default function ProductDetail() {
             </span>
           </div>
           
-          <p className="text-3xl font-black text-[#C026FF] drop-shadow-[0_0_10px_rgba(192,38,255,0.6)] mb-4">
+          <p className="text-3xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.35)] mb-4">
             {formatARS(Math.round(product.price))}
           </p>
           
@@ -242,8 +242,8 @@ export default function ProductDetail() {
           </div>
           
           {/* Product Benefits */}
-          <div className="bg-black/55 border border-[#C026FF]/30 rounded-lg p-4 mb-6">
-            <h3 className="font-semibold text-[#C026FF] mb-3">Beneficios clave</h3>
+          <div className="bg-black/55 border border-white/30 rounded-lg p-4 mb-6">
+            <h3 className="font-semibold text-white mb-3">Beneficios clave</h3>
             <ul className="space-y-2">
               <li className="flex items-center">
                 <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0" />
@@ -269,17 +269,17 @@ export default function ProductDetail() {
             <label htmlFor="quantity" className="mr-4 text-gray-200">
               Cantidad:
             </label>
-            <div className="flex items-center border border-[#C026FF]/40 rounded-md">
+            <div className="flex items-center border border-white/40 rounded-md">
               <button
                 onClick={() => handleQuantityChange(Math.max(1, quantity - 1))}
-                className="px-3 py-1 text-gray-200 hover:bg-[#C026FF]/15"
+                className="px-3 py-1 text-gray-200 hover:bg-white/15"
               >
                 -
               </button>
               <span className="px-4 py-1 text-white">{quantity}</span>
               <button
                 onClick={() => handleQuantityChange(Math.min(product.stock, quantity + 1))}
-                className="px-3 py-1 text-gray-200 hover:bg-[#C026FF]/15"
+                className="px-3 py-1 text-gray-200 hover:bg-white/15"
               >
                 +
               </button>
@@ -292,7 +292,7 @@ export default function ProductDetail() {
             disabled={product.stock === 0}
             className={`w-full flex items-center justify-center space-x-2 py-3 rounded-md btn-hover-scale ${
               product.stock > 0
-                ? 'bg-primary hover:bg-magenta-600 text-white'
+                ? 'bg-primary hover:bg-white hover:text-black text-white'
                 : 'bg-gray-300 cursor-not-allowed text-gray-500'
             } transition-colors`}
           >
@@ -344,7 +344,7 @@ export default function ProductDetail() {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {relatedProduct.name}
                   </h3>
-                  <p className="text-[#C026FF] font-extrabold mt-2">
+                  <p className="text-white font-extrabold mt-2">
                     {formatARS(Math.round(relatedProduct.price))}
                   </p>
                 </div>

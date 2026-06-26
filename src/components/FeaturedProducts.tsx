@@ -55,9 +55,9 @@ export default function FeaturedProductos() {
         Productos mas vendidos
       </h2>
       {!isSupabaseConfigured ? (
-        <div className="rounded-lg border border-[#C026FF]/35 bg-black/55 p-4 text-left text-gray-200 backdrop-blur-sm">
-          Configura <code className="text-[#C026FF]">VITE_SUPABASE_URL</code> y{' '}
-          <code className="text-[#C026FF]">VITE_SUPABASE_ANON_KEY</code> en <code>.env</code> para cargar productos reales.
+        <div className="rounded-lg border border-white/35 bg-black/55 p-4 text-left text-gray-200 backdrop-blur-sm">
+          Configura <code className="text-white">VITE_SUPABASE_URL</code> y{' '}
+          <code className="text-white">VITE_SUPABASE_ANON_KEY</code> en <code>.env</code> para cargar productos reales.
         </div>
       ) : null}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -74,7 +74,7 @@ export default function FeaturedProductos() {
       <div className="mt-8 text-center">
         <Link
           to="/products"
-          className="inline-block px-6 py-3 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors btn-hover-scale btn-hover-shadow"
+          className="inline-block px-6 py-3 bg-primary text-white rounded-md hover:bg-white hover:text-black transition-colors btn-hover-scale btn-hover-shadow"
         >
           Ver todos los productos
         </Link>

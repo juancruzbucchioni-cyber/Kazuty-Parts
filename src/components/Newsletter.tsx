@@ -52,7 +52,7 @@ export default function Newsletter() {
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-magenta-600 transition-colors disabled:bg-gray-400"
+                className="px-6 py-3 bg-primary text-white rounded-lg hover:bg-white hover:text-black transition-colors disabled:bg-gray-400"
               >
                 {loading ? 'Subscribing...' : 'Subscribe'}
               </button>

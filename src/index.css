@@ -1,4 +1,4 @@
-﻿@tailwind base;
+@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -15,20 +15,20 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 0%;
+    --popover-foreground: 0 0% 100%;
     --primary: 0 0% 0%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
@@ -121,8 +121,9 @@
 html,
 body {
   min-height: 100%;
-  @apply text-text dark:text-textLight transition-colors duration-300;
-  background: #fff;
+  @apply transition-colors duration-300;
+  color: #fff;
+  background: #000;
 }
 
 body {
@@ -146,7 +147,7 @@ body {
 }
 
 .btn-primary {
-  @apply bg-primary text-white hover:bg-magenta-600;
+  @apply bg-white text-black hover:bg-gray-200;
 }
 
 .btn-secondary {
@@ -155,7 +156,7 @@ body {
 
 /* Card shadow */
 .card {
-  @apply bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg transition-all duration-300;
+  @apply bg-black text-white p-4 rounded-lg shadow-lg transition-all duration-300;
 }
 
 .product-sale-card {
@@ -204,7 +205,7 @@ body {
 
 /* Gradient backgrounds */
 .gradient-primary {
-  @apply bg-gradient-to-r from-primary to-magenta-700;
+  @apply bg-gradient-to-r from-white to-gray-400;
 }
 
 .gradient-secondary {
@@ -218,7 +219,7 @@ body {
 
 .link-hover::after {
   content: '';
-  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 ease-in-out;
+  @apply absolute bottom-0 left-0 w-0 h-0.5 bg-white transition-all duration-300 ease-in-out;
 }
 
 .link-hover:hover::after {
@@ -232,6 +233,62 @@ body {
 
 .btn-hover-shadow {
   @apply transition-shadow duration-300 hover:shadow-lg;
+}
+
+/* Rebrand override: the site is now a black/white storefront. */
+#root,
+main,
+section {
+  color: #fff;
+}
+
+.text-primary,
+.hover\:text-primary:hover {
+  color: #fff !important;
+  text-shadow: none !important;
+}
+
+.bg-primary {
+  background-color: #fff !important;
+  color: #000 !important;
+}
+
+.border-primary,
+.border-primary\/30,
+.border-primary\/40 {
+  border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+.bg-white,
+.dark\:bg-gray-800,
+.dark\:bg-gray-700 {
+  background-color: #050505 !important;
+}
+
+.text-gray-900,
+.text-gray-800,
+.text-gray-700,
+.text-gray-600,
+.text-gray-500,
+.text-gray-400,
+.text-black,
+.dark\:text-white,
+.dark\:text-gray-300 {
+  color: #fff !important;
+}
+
+.text-red-600,
+.text-red-500,
+.text-red-400,
+.text-red-300,
+.dark\:text-red-400 {
+  color: #fff !important;
+}
+
+.bg-red-600,
+.bg-red-500 {
+  background-color: #fff !important;
+  color: #000 !important;
 }
 
 

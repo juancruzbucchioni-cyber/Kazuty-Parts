@@ -9,7 +9,6 @@ import Cart from './pages/Cart';
 import Auth from './pages/Auth';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Terms from './pages/Terms';
-import ScrollToTop from './components/ScrollToTop';
 import { useAuthStore } from './store/authStore';
 import ShippingPolicy from './pages/ShippingPolicy';
 import Returns from './pages/Returns';
@@ -79,15 +78,13 @@ function App() {
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/kazuty-control-8474" element={<CustomPanel />} />
+          <Route path="/elvio-control-8474" element={<CustomPanel />} />
         </Routes>
       </main>
 
       {/* Footer */}
       <Footer />
       
-      {/* Scroll to Top Button */}
-      <ScrollToTop />
     </div>
   );
 }

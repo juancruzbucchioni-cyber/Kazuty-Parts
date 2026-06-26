@@ -1,4 +1,4 @@
-import { Eye, ShoppingCart } from 'lucide-react';
+﻿import { Eye, ShoppingCart } from 'lucide-react';
 import { Product } from '../types/supabase';
 import { useEffect, memo, useState } from 'react';
 import { useCartStore } from '../store/cartStore';

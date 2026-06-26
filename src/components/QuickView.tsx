@@ -94,7 +94,7 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
               </span>
             </div>
             
-            <p className="text-2xl font-black text-[#C026FF] drop-shadow-[0_0_8px_rgba(192,38,255,0.55)] mb-4">
+            <p className="text-2xl font-black text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.35)] mb-4">
               {formatARS(Math.round(product.price))}
             </p>
             
@@ -164,7 +164,7 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
                 disabled={product.stock === 0}
                 className={`w-full flex items-center justify-center space-x-2 py-3 rounded-md transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                   product.stock > 0
-                    ? 'bg-primary hover:bg-magenta-600 text-white'
+                    ? 'bg-primary hover:bg-white hover:text-black text-white'
                     : 'bg-gray-300 cursor-not-allowed text-gray-500'
                 }`}
               >

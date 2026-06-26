@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { ShoppingCart, Trash2, ArrowLeft, Plus, Minus } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { Link } from 'react-router-dom';
@@ -65,10 +65,10 @@ export default function Cart() {
       {cartItems.length === 0 ? (
         <div className="bg-black/55 backdrop-blur-sm p-8 rounded-lg border border-primary/30 text-center">
           <ShoppingCart className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-          <p className="text-gray-300 text-lg mb-6">Tu carrito está vacío.</p>
+          <p className="text-gray-300 text-lg mb-6">Tu carrito estÃ¡ vacÃ­o.</p>
           <Link
             to="/products"
-          className="inline-block px-6 py-2 bg-black text-white rounded-md hover:bg-red-600 transition-colors btn-hover-scale btn-hover-shadow"
+          className="inline-block px-6 py-2 bg-black text-white rounded-md hover:bg-white hover:text-black transition-colors btn-hover-scale btn-hover-shadow"
           >
             Seguir comprando
           </Link>
@@ -107,7 +107,7 @@ export default function Cart() {
                 </div>
                 <div className="flex flex-col items-end">
                   <p className="font-semibold text-white mb-2">{formatARS(Math.round(item.price * item.quantity))}</p>
-                  <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-red-300 transition-colors">
+                  <button onClick={() => removeItem(item.id)} className="text-red-400 hover:text-gray-300 transition-colors">
                     <Trash2 className="h-5 w-5" />
                   </button>
                 </div>
@@ -115,7 +115,7 @@ export default function Cart() {
             ))}
 
             <div className="mt-6">
-              <Link to="/products" className="inline-flex items-center text-white hover:text-red-300 transition-colors link-hover">
+              <Link to="/products" className="inline-flex items-center text-white hover:text-gray-300 transition-colors link-hover">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Seguir comprando
               </Link>

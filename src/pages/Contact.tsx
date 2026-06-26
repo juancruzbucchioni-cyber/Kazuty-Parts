@@ -143,7 +143,7 @@ export default function Contact() {
                     setSubmitted(false);
                     setFormData({ name: '', email: '', subject: '', message: '' });
                   }}
-                  className="px-6 py-2 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors"
+                  className="px-6 py-2 bg-primary text-white rounded-md hover:bg-white hover:text-black transition-colors"
                 >
                   Send another message
                 </button>
@@ -221,7 +221,7 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full px-6 py-3 bg-primary text-white rounded-md hover:bg-magenta-600 transition-colors disabled:bg-gray-400 flex items-center justify-center"
+                  className="w-full px-6 py-3 bg-primary text-white rounded-md hover:bg-white hover:text-black transition-colors disabled:bg-gray-400 flex items-center justify-center"
                 >
                   {loading ? (
                     <>

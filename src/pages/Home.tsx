@@ -117,31 +117,31 @@ export default function Home() {
 
   return (
     <section className="container py-10">
-      <div className="relative min-h-[58vh] w-full rounded-2xl border border-gray-200 bg-white shadow-sm">
+      <div className="relative min-h-[58vh] w-full rounded-2xl border border-white/10 bg-zinc-950 shadow-[0_18px_60px_rgba(255,255,255,0.06)]">
         <div className="relative z-10 min-h-[72vh] flex flex-col items-center justify-start pt-20 md:pt-16 text-center px-4">
-          <h1 className="font-brand text-4xl font-black text-black md:text-6xl">
-            ELVIO <span className="text-red-600">MONTEIRO</span>
+          <h1 className="font-brand text-4xl font-black text-white md:text-6xl">
+            ELVIO <span className="text-white">MONTEIRO</span>
           </h1>
-          <p className="mt-4 max-w-2xl text-lg font-medium text-gray-700 md:text-xl">
+          <p className="mt-4 max-w-2xl text-lg font-medium text-gray-200 md:text-xl">
             Repuestos, accesorios y atención directa para tu moto.
           </p>
           <div className="flex gap-3 mt-6">
-            <Link to="/products" className="rounded-md bg-black px-6 py-2 font-bold text-white transition-colors hover:bg-red-600">Ver productos</Link>
-            <Link to="/categories" className="rounded-md border border-black px-6 py-2 font-bold text-black transition-colors hover:bg-black hover:text-white">Categorias</Link>
+            <Link to="/products" className="rounded-md bg-white px-6 py-2 font-bold text-black transition-colors hover:bg-gray-200">Ver productos</Link>
+            <Link to="/categories" className="rounded-md border border-white/40 px-6 py-2 font-bold text-white transition-colors hover:bg-white/10">Categorias</Link>
           </div>
 
-          <div className="mt-8 w-full max-w-5xl overflow-hidden rounded-md border border-gray-200 bg-gray-50">
+          <div className="mt-8 w-full max-w-5xl overflow-hidden rounded-md border border-white/10 bg-black">
             <div className="reviews-ticker-track flex items-center py-3">
               {[...clientReviews, ...clientReviews].map((review, index) => (
-                <div key={`${review.nombre}-${index}`} className="mx-3 shrink-0 rounded-md border border-gray-200 bg-white px-4 py-2 shadow-sm">
+                <div key={`${review.nombre}-${index}`} className="mx-3 shrink-0 rounded-md border border-white/10 bg-zinc-950 px-4 py-2 shadow-sm">
                   <div className="flex items-center gap-3">
                     <img
                       src={review.foto || '/branding/logo.png'}
                       alt={review.nombre}
-                      className="h-10 w-10 rounded-full border border-gray-300 object-cover"
+                      className="h-10 w-10 rounded-full border border-white/20 object-cover"
                     />
-                    <p className="text-sm text-gray-800 md:text-base">
-                      <span className="font-bold text-black">{review.nombre}:</span> {review.mensaje}
+                    <p className="text-sm text-gray-200 md:text-base">
+                      <span className="font-bold text-white">{review.nombre}:</span> {review.mensaje}
                     </p>
                   </div>
                 </div>
@@ -150,19 +150,19 @@ export default function Home() {
           </div>
 
           <div className="mt-6 grid w-full max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm">
-              <p className="text-3xl font-black text-black">+20.000</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-700">Ventas enviadas</p>
+            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
+              <p className="text-3xl font-black text-white">+20.000</p>
+              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">Ventas enviadas</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm">
-              <p className="text-xl text-yellow-500">★★★★★</p>
-              <p className="text-3xl font-black text-black">+20.000</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-700">Clientes satisfechos</p>
+            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
+              <p className="text-xl text-white">★★★★★</p>
+              <p className="text-3xl font-black text-white">+20.000</p>
+              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">Clientes satisfechos</p>
             </div>
-            <div className="rounded-xl border border-gray-200 bg-white p-5 text-center shadow-sm">
+            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
               <p className="text-3xl">📦</p>
-              <p className="text-2xl font-black text-black">Envíos</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-700">A todo Argentina</p>
+              <p className="text-2xl font-black text-white">Envíos</p>
+              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">A todo Argentina</p>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function Home() {
       </div>
 
       <div className="mt-16 w-full">
-        <h2 className="font-brand mb-8 text-3xl font-bold text-black">Todas las categorias</h2>
+        <h2 className="font-brand mb-8 text-3xl font-bold text-white">Todas las categorias</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {(categoriesWithProducts.length > 0
             ? categoriesWithProducts
@@ -182,7 +182,7 @@ export default function Home() {
             <Link
               key={categoria}
               to={`/products?category=${encodeURIComponent(categoria)}`}
-              className="font-brand rounded-md border border-gray-300 bg-white px-4 py-3 text-center font-semibold text-black transition-colors hover:bg-black hover:text-white"
+              className="font-brand rounded-md border border-white/20 bg-zinc-950 px-4 py-3 text-center font-semibold text-white transition-colors hover:bg-white hover:text-black"
             >
               {categoria}
             </Link>
@@ -191,11 +191,11 @@ export default function Home() {
       </div>
 
       <div className="mt-16 w-full">
-        <h2 className="font-brand mb-8 text-3xl font-bold text-black">Productos por categoria</h2>
+        <h2 className="font-brand mb-8 text-3xl font-bold text-white">Productos por categoria</h2>
         <div className="space-y-10">
           {groupedProducts.map((block) => (
             <div key={block.category}>
-              <h3 className="font-brand mb-4 text-xl text-black md:text-2xl">{block.category}</h3>
+              <h3 className="font-brand mb-4 text-xl text-white md:text-2xl">{block.category}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {block.products.map((product) => (
                   <Link
@@ -213,15 +213,15 @@ export default function Home() {
       </div>
 
       <div className="mt-16 w-full">
-        <div className="mx-auto max-w-3xl rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm md:p-8">
-          <p className="text-2xl font-black tracking-wide text-black">@elvio.monteiro_1_2_3</p>
-          <p className="mt-3 text-gray-700">Seguinos para novedades, ingresos y promos.</p>
+        <div className="mx-auto max-w-3xl rounded-xl border border-white/10 bg-zinc-950 p-6 text-center shadow-sm md:p-8">
+          <p className="text-2xl font-black tracking-wide text-white">@elvio.monteiro_1_2_3</p>
+          <p className="mt-3 text-gray-200">Seguinos para novedades, ingresos y promos.</p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <a
               href="https://www.instagram.com/elvio.monteiro_1_2_3?igsh=MW5qZnRiZ3hibWYwMg=="
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md border border-black px-6 py-3 font-bold text-black transition-colors hover:bg-black hover:text-white"
+              className="rounded-md border border-white/40 px-6 py-3 font-bold text-white transition-colors hover:bg-white/10"
             >
               Ir a Instagram
             </a>
@@ -229,7 +229,7 @@ export default function Home() {
               href="https://wa.me/5493755745255?text=Hola%20Elvio%20Monteiro%2C%20quiero%20hacer%20una%20consulta."
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md bg-black px-6 py-3 font-bold text-white transition-colors hover:bg-red-600"
+              className="rounded-md bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-gray-200"
             >
               Enviar mensaje directo
             </a>
@@ -239,3 +239,4 @@ export default function Home() {
     </section>
   );
 }
+

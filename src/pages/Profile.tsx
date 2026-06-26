@@ -193,7 +193,7 @@ export default function Perfil() {
                 {!isEditing ? (
                   <button 
                     onClick={() => setIsEditing(true)}
-                    className="flex items-center space-x-1 text-primary hover:text-magenta-600"
+                    className="flex items-center space-x-1 text-primary hover:text-gray-300"
                   >
                     <Edit className="h-4 w-4" />
                     <span>Edit</span>
@@ -307,7 +307,7 @@ export default function Perfil() {
                   
                   <button
                     type="submit"
-                    className="flex items-center space-x-2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-magenta-600 transition-colors btn-hover-scale"
+                    className="flex items-center space-x-2 bg-primary text-white px-6 py-2 rounded-lg hover:bg-white hover:text-black transition-colors btn-hover-scale"
                   >
                     <Save className="h-5 w-5" />
                     <span>Save Changes</span>
@@ -376,7 +376,7 @@ export default function Perfil() {
                       Last changed: Never
                     </p>
                   </div>
-                  <button className="text-primary hover:text-magenta-600 transition-colors link-hover">
+                  <button className="text-primary hover:text-gray-300 transition-colors link-hover">
                     Change Password
                   </button>
                 </div>
@@ -388,7 +388,7 @@ export default function Perfil() {
                       Not enabled
                     </p>
                   </div>
-                  <button className="text-primary hover:text-magenta-600 transition-colors link-hover">
+                  <button className="text-primary hover:text-gray-300 transition-colors link-hover">
                     Enable
                   </button>
                 </div>

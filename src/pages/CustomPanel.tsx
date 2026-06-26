@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from 'react';
+﻿import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Edit, Plus, RefreshCw, Save, Trash2 } from 'lucide-react';
 import { isSupabaseConfigured, supabase } from '../lib/supabase';
@@ -68,9 +68,9 @@ const emptyTestimonial: TestimonialForm = {
   orden: '0',
 };
 
-const fieldClass = 'w-full rounded-md border border-[#C026FF]/35 bg-black/60 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:border-[#C026FF] focus:outline-none';
+const fieldClass = 'w-full rounded-md border border-white/35 bg-black/60 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:border-white focus:outline-none';
 const labelClass = 'text-sm font-semibold text-gray-200';
-const panelClass = 'rounded-lg border border-[#C026FF]/30 bg-black/60 p-4 backdrop-blur-sm';
+const panelClass = 'rounded-lg border border-white/30 bg-black/60 p-4 backdrop-blur-sm';
 
 function splitList(value: string) {
   return value
@@ -348,9 +348,9 @@ export default function CustomPanel() {
     return (
       <section className="container py-10">
         <div className={panelClass}>
-          <h1 className="font-brand text-3xl text-[#C026FF]">Panel administrador</h1>
+          <h1 className="font-brand text-3xl text-white">Panel administrador</h1>
           <p className="mt-3 text-gray-200">Tenes que iniciar sesion para administrar la tienda.</p>
-          <Link to="/auth" className="mt-5 inline-flex rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white">
+          <Link to="/auth" className="mt-5 inline-flex rounded-md bg-white px-4 py-2 font-bold text-white">
             Ingresar
           </Link>
         </div>
@@ -362,12 +362,12 @@ export default function CustomPanel() {
     return (
       <section className="container py-10">
         <div className={panelClass}>
-          <h1 className="font-brand text-3xl text-[#C026FF]">Panel administrador</h1>
+          <h1 className="font-brand text-3xl text-white">Panel administrador</h1>
           <p className="mt-3 text-gray-200">
             Tu usuario inicio sesion, pero todavia no esta marcado como administrador en Supabase.
           </p>
           <p className="mt-2 text-sm text-gray-400">
-            Activa <code className="text-[#C026FF]">profiles.is_admin = true</code> para tu usuario.
+            Activa <code className="text-white">profiles.is_admin = true</code> para tu usuario.
           </p>
         </div>
       </section>
@@ -378,11 +378,11 @@ export default function CustomPanel() {
     <section className="container py-10 space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-[#C026FF]">Kazuty Partz</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-white">Elvio Monteiro</p>
           <h1 className="font-brand text-3xl text-white md:text-4xl">Panel administrador</h1>
           <p className="mt-2 text-gray-300">Crea y edita productos, categorias y resenas conectadas a Supabase.</p>
         </div>
-        <button onClick={loadData} className="inline-flex items-center gap-2 rounded-md border border-[#C026FF]/50 bg-[#C026FF]/10 px-4 py-2 text-sm font-bold text-white">
+        <button onClick={loadData} className="inline-flex items-center gap-2 rounded-md border border-white/50 bg-white/10 px-4 py-2 text-sm font-bold text-white">
           <RefreshCw className="h-4 w-4" />
           Actualizar
         </button>
@@ -392,10 +392,10 @@ export default function CustomPanel() {
         <div className={panelClass}><p className="text-gray-400">Productos</p><p className="text-3xl font-black text-white">{products.length}</p></div>
         <div className={panelClass}><p className="text-gray-400">Categorias</p><p className="text-3xl font-black text-white">{categories.length}</p></div>
         <div className={panelClass}><p className="text-gray-400">Stock total</p><p className="text-3xl font-black text-white">{stats.totalStock}</p></div>
-        <div className={panelClass}><p className="text-gray-400">Stock bajo</p><p className="text-3xl font-black text-[#C026FF]">{stats.lowStock}</p></div>
+        <div className={panelClass}><p className="text-gray-400">Stock bajo</p><p className="text-3xl font-black text-white">{stats.lowStock}</p></div>
       </div>
 
-      {message ? <div className="rounded-md border border-[#C026FF]/35 bg-[#C026FF]/10 p-3 text-gray-100">{message}</div> : null}
+      {message ? <div className="rounded-md border border-white/35 bg-white/10 p-3 text-gray-100">{message}</div> : null}
 
       <div className="flex flex-wrap gap-2">
         {[
@@ -406,7 +406,7 @@ export default function CustomPanel() {
           <button
             key={id}
             onClick={() => setActiveTab(id as typeof activeTab)}
-            className={`rounded-md border px-4 py-2 text-sm font-bold ${activeTab === id ? 'border-[#C026FF] bg-[#C026FF]/25 text-white' : 'border-white/15 bg-black/40 text-gray-300'}`}
+            className={`rounded-md border px-4 py-2 text-sm font-bold ${activeTab === id ? 'border-white bg-white/25 text-white' : 'border-white/15 bg-black/40 text-gray-300'}`}
           >
             {label}
           </button>
@@ -437,7 +437,7 @@ export default function CustomPanel() {
             </label>
             <label className={labelClass}>Mas imagenes, una por linea<textarea className={`${fieldClass} min-h-20`} value={productForm.extra_images} onChange={(e) => setProductForm({ ...productForm, extra_images: e.target.value })} /></label>
             <div className="flex gap-2">
-              <button disabled={saving || uploading} className="inline-flex items-center gap-2 rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white disabled:opacity-60">
+              <button disabled={saving || uploading} className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-bold text-white disabled:opacity-60">
                 <Save className="h-4 w-4" />
                 {uploading ? 'Subiendo...' : 'Guardar'}
               </button>
@@ -447,10 +447,10 @@ export default function CustomPanel() {
 
           <div className={`${panelClass} overflow-x-auto`}>
             <table className="w-full min-w-[760px] text-left text-sm">
-              <thead className="text-[#C026FF]"><tr><th className="p-2">Producto</th><th className="p-2">Categoria</th><th className="p-2">Precio</th><th className="p-2">Stock</th><th className="p-2">Acciones</th></tr></thead>
+              <thead className="text-white"><tr><th className="p-2">Producto</th><th className="p-2">Categoria</th><th className="p-2">Precio</th><th className="p-2">Stock</th><th className="p-2">Acciones</th></tr></thead>
               <tbody>{products.map((product) => (
                 <tr key={product.id} className="border-t border-white/10 text-gray-200">
-                  <td className="p-2">{product.name}</td><td className="p-2">{product.category}</td><td className="p-2 text-[#C026FF]">{formatARS(Math.round(product.price))}</td><td className="p-2">{product.stock}</td>
+                  <td className="p-2">{product.name}</td><td className="p-2">{product.category}</td><td className="p-2 text-white">{formatARS(Math.round(product.price))}</td><td className="p-2">{product.stock}</td>
                   <td className="flex gap-2 p-2"><button onClick={() => editProduct(product)} className="rounded bg-white/10 p-2"><Edit className="h-4 w-4" /></button><button onClick={() => deleteProduct(product.id)} className="rounded bg-red-500/20 p-2 text-red-300"><Trash2 className="h-4 w-4" /></button></td>
                 </tr>
               ))}</tbody>
@@ -468,7 +468,7 @@ export default function CustomPanel() {
             <label className={labelClass}>Foto URL<input className={fieldClass} value={categoryForm.image_url} onChange={(e) => setCategoryForm({ ...categoryForm, image_url: e.target.value })} /></label>
             <label className={labelClass}>Orden<input type="number" className={fieldClass} value={categoryForm.orden} onChange={(e) => setCategoryForm({ ...categoryForm, orden: e.target.value })} /></label>
             <label className="flex items-center gap-2 text-sm text-gray-200"><input type="checkbox" checked={categoryForm.activo} onChange={(e) => setCategoryForm({ ...categoryForm, activo: e.target.checked })} /> Activa</label>
-            <button disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white"><Plus className="h-4 w-4" />Guardar categoria</button>
+            <button disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-bold text-white"><Plus className="h-4 w-4" />Guardar categoria</button>
           </form>
           <div className={`${panelClass} space-y-2`}>
             {categories.map((category) => (
@@ -490,7 +490,7 @@ export default function CustomPanel() {
             <label className={labelClass}>Foto URL<input className={fieldClass} value={testimonialForm.foto_url} onChange={(e) => setTestimonialForm({ ...testimonialForm, foto_url: e.target.value })} /></label>
             <label className={labelClass}>Orden<input type="number" className={fieldClass} value={testimonialForm.orden} onChange={(e) => setTestimonialForm({ ...testimonialForm, orden: e.target.value })} /></label>
             <label className="flex items-center gap-2 text-sm text-gray-200"><input type="checkbox" checked={testimonialForm.activo} onChange={(e) => setTestimonialForm({ ...testimonialForm, activo: e.target.checked })} /> Visible</label>
-            <button disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-[#C026FF] px-4 py-2 font-bold text-white"><Save className="h-4 w-4" />Guardar resena</button>
+            <button disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 font-bold text-white"><Save className="h-4 w-4" />Guardar resena</button>
           </form>
           <div className={`${panelClass} space-y-2`}>
             {testimonials.map((testimonial) => (
