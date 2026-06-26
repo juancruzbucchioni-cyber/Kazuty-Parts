@@ -2,6 +2,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import WhatsAppFloat from './components/WhatsAppFloat';
 import Home from './pages/Home';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
@@ -84,6 +85,7 @@ function App() {
 
       {/* Footer */}
       <Footer />
+      <WhatsAppFloat />
       
     </div>
   );
