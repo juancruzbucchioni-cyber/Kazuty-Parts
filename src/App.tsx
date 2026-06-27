@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import WhatsAppFloat from './components/WhatsAppFloat';
 import Home from './pages/Home';
+import Offers from './pages/Offers';
 import Products from './pages/Products';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
@@ -64,6 +65,7 @@ function App() {
       <main className="flex-grow container py-10 animate-fadeInUp">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/offers" element={<Offers />} />
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/cart" element={<Cart />} />
@@ -79,7 +81,7 @@ function App() {
           <Route path="/sitemap" element={<Sitemap />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/profile" element={<Profile />} />
-          <Route path="/elvio-control-8474" element={<CustomPanel />} />
+          <Route path="/kazuty-control-8474" element={<CustomPanel />} />
         </Routes>
       </main>
 

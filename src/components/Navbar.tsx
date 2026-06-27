@@ -1,11 +1,11 @@
 ﻿import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Instagram, LogOut, Search, ShoppingCart, User } from 'lucide-react';
+import { LogOut, Search, ShoppingCart, User } from 'lucide-react';
 import { useCartStore } from '../store/cartStore';
 import { useAuthStore } from '../store/authStore';
 
-const INSTAGRAM_URL = 'https://www.instagram.com/elvio.monteiro_1_2_3?igsh=MW5qZnRiZ3hibWYwMg==';
-const WHATSAPP_URL = 'https://wa.me/5493755745255?text=Hola%20Elvio%20Monteiro%2C%20quiero%20consultar%20por%20productos.';
+const INSTAGRAM_URL = 'https://www.instagram.com/juan.bucchioni';
+const WHATSAPP_URL = 'https://wa.me/54935341284744?text=Hola%20Kazuty%20Parts%2C%20quiero%20consultar%20por%20productos.';
 
 export default function Navbar() {
   const cartItems = useCartStore((state) => state.items);
@@ -17,7 +17,7 @@ export default function Navbar() {
   const location = useLocation();
   const { user, profile, signOut } = useAuthStore();
   const displayName = profile?.username || user?.email?.split('@')[0] || 'Mi cuenta';
-  const isAdminPanel = location.pathname === '/elvio-control-8474';
+  const isAdminPanel = location.pathname === '/kazuty-control-8474';
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 90);
@@ -40,40 +40,54 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-white/10 bg-zinc-950/95 text-white shadow-[0_8px_28px_rgba(255,255,255,0.04)] backdrop-blur-md">
-      <div className={`container flex flex-col gap-4 transition-all duration-300 lg:flex-row lg:items-center lg:justify-between ${isScrolled ? 'min-h-16 py-3' : 'min-h-24 py-4'}`}>
-        <Link to="/" className="flex items-center">
-          <div className={`transition-all duration-300 ${isScrolled ? 'px-1 py-0.5' : 'px-1 py-1'}`}>
-            <img
-              src="/branding/navbar-logo-elvio-transparent.png"
-              alt="Elvio Monteiro"
-              className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-10 md:h-12' : 'h-14 md:h-16'}`}
-            />
-          </div>
+    <nav className="sticky top-0 z-50 border-b border-white/15 bg-black text-white shadow-[0_8px_28px_rgba(168,85,247,0.14)]">
+      <div className={`mx-auto flex w-full max-w-7xl flex-col gap-3 px-4 transition-all duration-300 lg:flex-row lg:items-center lg:justify-between ${isScrolled ? 'py-2' : 'py-3'}`}>
+        <Link to="/" className="flex items-center" aria-label="Volver al inicio de Kazuty Parts">
+          <img
+            src="/branding/kazuty-logo.png"
+            alt="Kazuty Parts"
+            className={`w-auto object-contain transition-all duration-300 ${isScrolled ? 'h-12 md:h-14' : 'h-14 md:h-16'}`}
+          />
         </Link>
 
-        <form onSubmit={handleSearch} className={`order-3 w-full lg:order-none ${isScrolled ? 'lg:max-w-4xl' : 'lg:max-w-2xl'}`}>
-          <div className="relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Que estas buscando?"
-              className="h-12 w-full rounded-xl border border-white/60 bg-black px-5 pr-12 text-base text-white placeholder:text-white/75 focus:outline-none focus:ring-2 focus:ring-white"
-            />
-            <Search className="absolute right-4 top-1/2 h-7 w-7 -translate-y-1/2 text-white" />
+        {!isAdminPanel && (
+          <div className="order-3 flex flex-wrap items-center justify-center rounded-full border border-white bg-white px-5 py-2 text-xs font-bold text-black shadow-[0_0_18px_rgba(255,255,255,0.18)] md:order-none md:px-7 md:text-sm">
+            <Link to="/" className="min-w-16 px-2 text-center transition-colors hover:text-purple-700">Inicio</Link>
+            <span className="text-black/45">|</span>
+            <Link to="/offers" className="min-w-16 px-2 text-center transition-colors hover:text-purple-700">Ofertas</Link>
+            <span className="text-black/45">|</span>
+            <Link to="/products" className="min-w-20 px-2 text-center transition-colors hover:text-purple-700">Productos</Link>
+            <span className="text-black/45">|</span>
+            <Link to="/products" className="min-w-20 px-2 text-center transition-colors hover:text-purple-700">Tendencia</Link>
+            <span className="text-black/45">|</span>
+            <Link to="/categories" className="min-w-20 px-2 text-center transition-colors hover:text-purple-700">Categorias</Link>
+            <span className="text-black/45">|</span>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="min-w-20 px-2 text-center transition-colors hover:text-purple-700">Instagram</a>
+            <span className="text-black/45">|</span>
+            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="min-w-20 px-2 text-center transition-colors hover:text-purple-700">Contacto</a>
           </div>
-        </form>
+        )}
 
         <div className="flex items-center justify-between gap-4 lg:justify-end">
-          <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="flex flex-col items-center gap-1 text-sm text-white hover:text-gray-300">
-            <Instagram className="h-7 w-7" />
-            <span>Instagram</span>
-          </a>
+          <form onSubmit={handleSearch} className="w-full min-w-[180px] max-w-[260px]">
+            <div className="relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Buscar productos"
+                className="h-11 w-full rounded-full border border-white bg-white px-5 pr-11 text-sm font-bold text-black placeholder:text-black/70 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              />
+              <button type="submit" aria-label="Buscar productos" className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-purple-700">
+                <Search className="h-5 w-5" />
+              </button>
+            </div>
+          </form>
+
           {!isScrolled && user ? (
             <div className="relative">
-              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="flex flex-col items-center gap-1 text-sm text-white hover:text-gray-300">
-                <User className="h-7 w-7" />
+              <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="hidden min-w-20 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-white transition-colors hover:bg-white/10 hover:text-purple-300 md:flex">
+                <User className="h-6 w-6" />
                 <span>{displayName}</span>
               </button>
               {isMenuOpen && (
@@ -89,13 +103,13 @@ export default function Navbar() {
               )}
             </div>
           ) : !isScrolled ? (
-            <Link to="/auth" className="flex flex-col items-center gap-1 text-sm text-white hover:text-gray-300">
-              <User className="h-7 w-7" />
+            <Link to="/auth" className="hidden min-w-20 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-white transition-colors hover:bg-white/10 hover:text-purple-300 md:flex">
+              <User className="h-6 w-6" />
               <span>Mi cuenta</span>
             </Link>
           ) : null}
-          <Link to="/cart" className="relative flex flex-col items-center gap-1 text-sm text-white hover:text-gray-300">
-            <ShoppingCart className={`${isScrolled ? 'h-7 w-7' : 'h-8 w-8'}`} />
+          <Link to="/cart" className="relative flex min-w-20 flex-col items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-white transition-colors hover:bg-white/10 hover:text-purple-300">
+            <ShoppingCart className={`${isScrolled ? 'h-6 w-6' : 'h-7 w-7'}`} />
             {itemCount > 0 && (
               <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs font-black text-black">
                 {itemCount}
@@ -105,24 +119,6 @@ export default function Navbar() {
           </Link>
         </div>
       </div>
-
-      {!isScrolled && !isAdminPanel && (
-        <div className="border-t border-white/10">
-          <div className="container flex flex-wrap items-center justify-center gap-6 py-4 text-base font-medium tracking-wide md:gap-10 md:text-lg">
-            <Link to="/" className="hover:text-gray-300">Inicio</Link>
-            <Link to="/products" className="hover:text-gray-300">Productos</Link>
-            <a
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-white/40 bg-white px-4 py-1.5 text-sm font-black uppercase tracking-[0.22em] text-black shadow-[0_0_18px_rgba(255,255,255,0.18)] transition-colors hover:bg-gray-200 md:text-base"
-            >
-              Comunidad
-            </a>
-            <a href={WHATSAPP_URL} target="_blank" rel="noreferrer" className="hover:text-gray-300">Contacto</a>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }

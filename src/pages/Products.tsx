@@ -190,7 +190,7 @@ export default function ProductosPage() {
           </h1>
         </div>
         <p className="text-gray-300 text-sm md:text-base">
-          Selecciona tu repuesto ideal con el estilo de <span className="text-primary font-bold">Elvio Monteiro</span>.
+          Selecciona tu repuesto ideal con el estilo de <span className="text-primary font-bold">Kazuty Parts</span>.
         </p>
       </div>
       <div className="flex justify-between items-center mb-6">

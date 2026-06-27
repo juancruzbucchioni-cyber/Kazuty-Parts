@@ -55,7 +55,7 @@ export default function Home() {
 
       setClientReviews([
         {
-          nombre: 'Cliente Elvio Monteiro',
+          nombre: 'Cliente Kazuty Parts',
           mensaje: 'Excelente atencion, me ayudaron a elegir justo lo que necesitaba.',
           foto: DEFAULT_REVIEW_AVATAR,
         },
@@ -117,53 +117,34 @@ export default function Home() {
   const categoriesWithProducts = groupedProducts.map((block) => block.category);
 
   return (
-    <section className="container py-10">
-      <div className="relative min-h-[58vh] w-full rounded-2xl border border-white/10 bg-zinc-950 shadow-[0_18px_60px_rgba(255,255,255,0.06)]">
-        <div className="relative z-10 min-h-[72vh] flex flex-col items-center justify-start pt-20 md:pt-16 text-center px-4">
-          <h1 className="font-brand text-4xl font-black text-white md:text-6xl">
-            ELVIO <span className="text-white">MONTEIRO</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg font-medium text-gray-200 md:text-xl">
-            Repuestos, accesorios y atención directa para tu moto.
-          </p>
-          <div className="flex gap-3 mt-6">
-            <Link to="/products" className="rounded-md bg-white px-6 py-2 font-bold text-black transition-colors hover:bg-gray-200">Ver productos</Link>
-            <Link to="/categories" className="rounded-md border border-white/40 px-6 py-2 font-bold text-white transition-colors hover:bg-white/10">Categorias</Link>
-          </div>
+    <section className="mx-auto w-full max-w-7xl px-4 py-6">
+      <div className="relative overflow-hidden rounded-md border border-white bg-black shadow-[0_0_36px_rgba(168,85,247,0.18)]">
+        <div className="p-4 md:p-6">
+          <Link
+            to="/products"
+            className="block overflow-hidden rounded-3xl border border-white bg-white"
+            aria-label="Ver productos Kazuty Parts"
+          >
+            <img
+              src="/branding/kazuty-hero.png"
+              alt="Kazuty Parts repuestos y accesorios para motos"
+              className="h-[260px] w-full object-cover md:h-[420px] lg:h-[520px]"
+            />
+          </Link>
 
-          <div className="mt-8 w-full max-w-5xl overflow-hidden rounded-md border border-white/10 bg-black">
-            <div className="reviews-ticker-track flex items-center py-3">
+          <div className="mt-8 overflow-hidden">
+            <div className="reviews-ticker-track flex items-center py-2">
               {[...clientReviews, ...clientReviews].map((review, index) => (
-                <div key={`${review.nombre}-${index}`} className="mx-3 shrink-0 rounded-md border border-white/10 bg-zinc-950 px-4 py-2 shadow-sm">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={review.foto || DEFAULT_REVIEW_AVATAR}
-                      alt={review.nombre}
-                      className="h-10 w-10 rounded-full border border-white/20 object-cover"
-                    />
-                    <p className="text-sm text-gray-200 md:text-base">
-                      <span className="font-bold text-white">{review.nombre}:</span> {review.mensaje}
-                    </p>
+                <article
+                  key={`${review.nombre}-${index}`}
+                  className="review-ribbon-card mx-3 flex min-h-24 w-64 shrink-0 items-center justify-center px-5 py-4 text-center md:w-72"
+                >
+                  <div>
+                    <p className="text-sm font-black uppercase text-white">{review.nombre}</p>
+                    <p className="mt-1 line-clamp-2 text-sm font-semibold text-white/90">{review.mensaje}</p>
                   </div>
-                </div>
+                </article>
               ))}
-            </div>
-          </div>
-
-          <div className="mt-6 grid w-full max-w-5xl grid-cols-1 gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
-              <p className="text-3xl font-black text-white">+20.000</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">Ventas enviadas</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
-              <p className="text-xl text-white">★★★★★</p>
-              <p className="text-3xl font-black text-white">+20.000</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">Clientes satisfechos</p>
-            </div>
-            <div className="rounded-xl border border-white/10 bg-zinc-950 p-5 text-center shadow-sm">
-              <p className="text-3xl">📦</p>
-              <p className="text-2xl font-black text-white">Envíos</p>
-              <p className="mt-1 text-sm font-bold uppercase tracking-wide text-gray-200">A todo Argentina</p>
             </div>
           </div>
         </div>
@@ -215,11 +196,11 @@ export default function Home() {
 
       <div className="mt-16 w-full">
         <div className="mx-auto max-w-3xl rounded-xl border border-white/10 bg-zinc-950 p-6 text-center shadow-sm md:p-8">
-          <p className="text-2xl font-black tracking-wide text-white">@elvio.monteiro_1_2_3</p>
+          <p className="text-2xl font-black tracking-wide text-white">@juan.bucchioni</p>
           <p className="mt-3 text-gray-200">Seguinos para novedades, ingresos y promos.</p>
           <div className="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href="https://www.instagram.com/elvio.monteiro_1_2_3?igsh=MW5qZnRiZ3hibWYwMg=="
+              href="https://www.instagram.com/juan.bucchioni"
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-md border border-white/40 px-6 py-3 font-bold text-white transition-colors hover:bg-white/10"
@@ -227,7 +208,7 @@ export default function Home() {
               Ir a Instagram
             </a>
             <a
-              href="https://wa.me/5493755745255?text=Hola%20Elvio%20Monteiro%2C%20quiero%20hacer%20una%20consulta."
+              href="https://wa.me/54935341284744?text=Hola%20Kazuty%20Parts%2C%20quiero%20hacer%20una%20consulta."
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-md bg-white px-6 py-3 font-bold text-black transition-colors hover:bg-gray-200"

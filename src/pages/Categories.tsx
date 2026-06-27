@@ -1,113 +1,167 @@
-﻿import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { useEffect, useMemo, useState } from 'react';
+import ProductCard from '../components/ProductCard';
+import QuickView from '../components/QuickView';
+import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { useCartStore } from '../store/cartStore';
+import { Product } from '../types/supabase';
 
-interface Category {
+type Category = {
   name: string;
   count: number;
-  image_url: string;
-}
+};
 
 export default function Categorias() {
-  const [categories, setCategorias] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
+  const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const addItem = useCartStore((state) => state.addItem);
 
   useEffect(() => {
-    async function fetchCategorias() {
-      setLoading(true);
-
-      const { data: categoriesData, error: categoriesError } = await supabase
-        .from('categories')
-        .select('name, image_url, activo, orden, created_at')
-        .order('orden', { ascending: true })
-        .order('created_at', { ascending: false });
-
-      if (categoriesError) {
-        console.error(categoriesError);
+    async function fetchCategoriesAndProducts() {
+      if (!isSupabaseConfigured) {
+        setCategories([]);
+        setProducts([]);
         setLoading(false);
         return;
       }
 
+      setLoading(true);
+
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from('categories')
+        .select('name, orden, created_at')
+        .order('orden', { ascending: true })
+        .order('created_at', { ascending: false });
+
       const { data: productsData, error: productsError } = await supabase
         .from('products')
-        .select('category, image_url');
+        .select('*')
+        .order('category', { ascending: true })
+        .order('name', { ascending: true });
 
-      if (productsError) {
-        console.error(productsError);
+      if (categoriesError || productsError) {
+        console.error(categoriesError || productsError);
+        setLoading(false);
+        return;
       }
 
+      const loadedProducts = (productsData || []) as Product[];
       const productCountByCategory = new Map<string, number>();
-      const fallbackImageByCategory = new Map<string, string>();
 
-      (productsData || []).forEach((product) => {
+      loadedProducts.forEach((product) => {
         productCountByCategory.set(product.category, (productCountByCategory.get(product.category) || 0) + 1);
-        if (!fallbackImageByCategory.has(product.category) && product.image_url) {
-          fallbackImageByCategory.set(product.category, product.image_url);
-        }
       });
 
-      const normalizedCategories: Category[] = (categoriesData || [])
-        .map((category) => ({
-          name: category.name,
-          count: productCountByCategory.get(category.name) || 0,
-          image_url: category.image_url || fallbackImageByCategory.get(category.name) || '/branding/logo-elvio.png',
+      const categoryNames = [
+        ...(categoriesData || []).map((category) => category.name),
+        ...loadedProducts.map((product) => product.category),
+      ];
+
+      const uniqueCategories = Array.from(new Set(categoryNames))
+        .map((name) => ({
+          name,
+          count: productCountByCategory.get(name) || 0,
         }))
         .filter((category) => category.count > 0);
 
-      setCategorias(normalizedCategories);
+      setCategories(uniqueCategories);
+      setProducts(loadedProducts);
       setLoading(false);
     }
 
-    fetchCategorias();
+    fetchCategoriesAndProducts();
   }, []);
+
+  const visibleProducts = useMemo(() => {
+    if (!selectedCategory) return products;
+    return products.filter((product) => product.category === selectedCategory);
+  }, [products, selectedCategory]);
+
+  const heading = selectedCategory || 'Todos los productos';
 
   if (loading) {
     return (
-      <div className="container py-10 flex justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      <div className="mx-auto flex min-h-[420px] w-full max-w-7xl items-center justify-center px-4 py-10">
+        <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-t-2 border-white"></div>
       </div>
     );
   }
 
   return (
-    <div className="container py-10">
-      <h1 className="font-brand text-3xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.35)] mb-8">
-        Categorias de productos
-      </h1>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category, index) => (
-          <Link
-            key={category.name}
-            to={`/products?category=${category.name}`}
-            className="bg-black/55 backdrop-blur-sm border border-white/30 rounded-lg shadow-md overflow-hidden transform transition-all duration-500 ease-in-out hover:scale-105 hover:shadow-xl will-change-transform"
-            style={{
-              animationDelay: `${index * 100}ms`,
-              animation: 'fadeInUp 0.6s ease-out forwards'
-            }}
+    <section className="mx-auto w-full max-w-7xl px-4 py-8">
+      <div className="rounded-md border border-purple-500 bg-black p-6 shadow-[0_0_28px_rgba(168,85,247,0.18)] md:p-8">
+        <div className="mb-8 rounded-full border border-white bg-white px-5 py-4 text-center text-sm font-black text-black shadow-[0_0_18px_rgba(255,255,255,0.14)]">
+          <button
+            type="button"
+            onClick={() => setSelectedCategory('')}
+            className={`transition-colors hover:text-purple-700 ${selectedCategory === '' ? 'text-purple-700' : ''}`}
           >
-            <div className="relative h-48 overflow-hidden">
-              <img
-                src={category.image_url}
-                alt={category.name}
-                className="w-full h-full object-cover transition-transform duration-700 ease-in-out hover:scale-110"
+            Todas
+          </button>
+          {categories.map((category) => (
+            <span key={category.name}>
+              <span className="mx-2 text-black/70">|</span>
+              <button
+                type="button"
+                onClick={() => setSelectedCategory(category.name)}
+                className={`transition-colors hover:text-purple-700 ${selectedCategory === category.name ? 'text-purple-700' : ''}`}
+              >
+                {category.name}
+              </button>
+            </span>
+          ))}
+        </div>
+
+        <div className="mb-8 inline-flex min-w-56 items-center justify-center rounded-full border border-white bg-white px-8 py-3 text-sm font-black text-black shadow-[0_0_18px_rgba(255,255,255,0.12)]">
+          Productos
+        </div>
+
+        {!isSupabaseConfigured ? (
+          <div className="product-sale-card mb-8 rounded-md p-4 text-white">
+            Configura Supabase para cargar categorias y productos reales.
+          </div>
+        ) : null}
+
+        <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-purple-300">Categoria</p>
+            <h1 className="font-brand mt-2 text-2xl font-black text-white md:text-4xl">{heading}</h1>
+          </div>
+          <p className="text-sm font-bold text-white/70">
+            {visibleProducts.length} {visibleProducts.length === 1 ? 'producto' : 'productos'}
+          </p>
+        </div>
+
+        {visibleProducts.length > 0 ? (
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {visibleProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={addItem}
+                onQuickView={(product) => {
+                  setQuickViewProduct(product);
+                  setIsQuickViewOpen(true);
+                }}
               />
-              <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300 hover:backdrop-blur-md">
-                <h2 className="font-brand text-2xl font-bold text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.35)] transform transition-all duration-300 hover:scale-110">{category.name}</h2>
-              </div>
-            </div>
-            <div className="p-4 transform transition-all duration-300 hover:translate-x-2">
-              <p className="text-gray-200">
-                {category.count} {category.count === 1 ? 'producto' : 'productos'}
-              </p>
-              <p className="mt-2 text-white transition-all duration-300 ease-in-out transform hover:translate-x-1">
-                Ver categoria ?
-              </p>
-            </div>
-          </Link>
-        ))}
+            ))}
+          </div>
+        ) : (
+          <div className="product-sale-card rounded-md p-8 text-center text-white">
+            No hay productos cargados en esta categoria.
+          </div>
+        )}
       </div>
-    </div>
+
+      {isQuickViewOpen && quickViewProduct && (
+        <QuickView
+          product={quickViewProduct}
+          onClose={() => setIsQuickViewOpen(false)}
+        />
+      )}
+    </section>
   );
 }
-

@@ -2,7 +2,7 @@ const sections = [
   {
     title: '1. Introducción',
     paragraphs: [
-      'Bienvenido a Elvio Monteiro. Al navegar y realizar compras en nuestro sitio web, usted acepta cumplir con los siguientes términos y condiciones. Si no está de acuerdo con alguna parte de estos, le rogamos no utilizar nuestros servicios.',
+      'Bienvenido a Kazuty Parts. Al navegar y realizar compras en nuestro sitio web, usted acepta cumplir con los siguientes términos y condiciones. Si no está de acuerdo con alguna parte de estos, le rogamos no utilizar nuestros servicios.',
     ],
   },
   {
@@ -47,7 +47,7 @@ const sections = [
   {
     title: '7. Propiedad intelectual',
     paragraphs: [
-      'Todo el contenido presente en esta web, incluyendo textos, logos, imágenes y gráficos, es propiedad exclusiva de Elvio Monteiro y está protegido por las leyes de derecho de autor.',
+      'Todo el contenido presente en esta web, incluyendo textos, logos, imágenes y gráficos, es propiedad exclusiva de Kazuty Parts y está protegido por las leyes de derecho de autor.',
     ],
   },
   {

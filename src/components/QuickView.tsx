@@ -40,8 +40,8 @@ const QuickView = memo(function QuickView({ product, onClose }: QuickViewProps) 
 
   const handleAddToCart = () => {
     if (isOnRequest) {
-      const message = `Hola Elvio Monteiro, quiero consultar por ${product.name}. Modelo de moto: _____. Color: ${selectedColor || '_____'}.`;
-      window.open(`https://wa.me/5493755745255?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      const message = `Hola Kazuty Parts, quiero consultar por ${product.name}. Modelo de moto: _____. Color: ${selectedColor || '_____'}.`;
+      window.open(`https://wa.me/54935341284744?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
       onClose();
       return;
     }

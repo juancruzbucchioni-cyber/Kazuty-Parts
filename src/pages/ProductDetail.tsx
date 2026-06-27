@@ -123,8 +123,8 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product) return;
     if (product.price <= 0) {
-      const message = `Hola Elvio Monteiro, quiero consultar por ${product.name}. Modelo de moto: _____. Color: ${selectedColor || '_____'}.`;
-      window.open(`https://wa.me/5493755745255?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
+      const message = `Hola Kazuty Parts, quiero consultar por ${product.name}. Modelo de moto: _____. Color: ${selectedColor || '_____'}.`;
+      window.open(`https://wa.me/54935341284744?text=${encodeURIComponent(message)}`, '_blank', 'noopener,noreferrer');
       return;
     }
 

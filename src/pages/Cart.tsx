@@ -6,7 +6,7 @@ import { formatARS } from '../lib/currency';
 
 type PaymentMethod = 'efectivo' | 'transferencia';
 
-const WHATSAPP_PHONE = '5493755745255';
+const WHATSAPP_PHONE = '54935341284744';
 
 function paymentLabel(method: PaymentMethod) {
   switch (method) {
@@ -48,7 +48,7 @@ export default function Cart() {
     });
 
     const message =
-      `Hola Elvio Monteiro, quiero comprar estos productos:\n\n` +
+      `Hola Kazuty Parts, quiero comprar estos productos:\n\n` +
       `${lines.join('\n')}\n\n` +
       `Forma de pago: ${paymentLabel(paymentMethod)}\n` +
       `Total: ${formatARS(Math.round(total))}\n\n` +

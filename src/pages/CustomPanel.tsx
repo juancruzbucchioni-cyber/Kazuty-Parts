@@ -312,7 +312,7 @@ export default function CustomPanel() {
         price: row.price ?? currentProduct?.price ?? 0,
         stock: row.stock ?? currentProduct?.stock ?? 0,
         category: row.category || currentProduct?.category || '',
-        image_url: row.image_url || currentProduct?.image_url || '/branding/logo-elvio.png',
+        image_url: row.image_url || currentProduct?.image_url || '/branding/kazuty-logo.png',
         colors: row.colors && row.colors.length > 0 ? row.colors : currentProduct?.colors || ['Consultar'],
       };
 
@@ -547,7 +547,7 @@ export default function CustomPanel() {
     <section className="container py-10 space-y-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="text-sm font-bold uppercase tracking-widest text-white">Elvio Monteiro</p>
+          <p className="text-sm font-bold uppercase tracking-widest text-white">Kazuty Parts</p>
           <h1 className="font-brand text-3xl text-white md:text-4xl">Panel administrador</h1>
           <p className="mt-2 text-gray-300">Crea y edita productos, categorias y resenas conectadas a Supabase.</p>
         </div>
